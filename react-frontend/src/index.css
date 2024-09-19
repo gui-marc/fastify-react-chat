@@ -1,0 +1,161 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --olive-1: 120 20% 99%;
+    --olive-2: 120 17% 98%;
+    --olive-3: 120 7% 94%;
+    --olive-4: 120 4% 91%;
+    --olive-5: 120 5% 88%;
+    --olive-6: 120 4% 85%;
+    --olive-7: 120 3% 81%;
+    --olive-8: 105 3% 73%;
+    --olive-9: 103 3% 54%;
+    --olive-10: 103 3% 50%;
+    --olive-11: 110 3% 38%;
+    --olive-12: 108 8% 12%;
+
+    --lime-1: 80 43% 99%;
+    --lime-2: 77 41% 97%;
+    --lime-3: 75 64% 90%;
+    --lime-4: 76 63% 84%;
+    --lime-5: 78 58% 78%;
+    --lime-6: 80 50% 71%;
+    --lime-7: 82 43% 63%;
+    --lime-8: 85 40% 52%;
+    --lime-9: 81 80% 66%;
+    --lime-10: 81 75% 60%;
+    --lime-11: 85 45% 34%;
+    --lime-12: 75 39% 18%;
+
+    --tomato-1: 0 100% 99%;
+    --tomato-2: 7 100% 98%;
+    --tomato-3: 10 92% 95%;
+    --tomato-4: 12 100% 91%;
+    --tomato-5: 11 100% 88%;
+    --tomato-6: 11 95% 84%;
+    --tomato-7: 10 82% 78%;
+    --tomato-8: 10 75% 70%;
+    --tomato-9: 10 78% 54%;
+    --tomato-10: 10 73% 51%;
+    --tomato-11: 10 82% 45%;
+    --tomato-12: 8 50% 24%;
+  }
+
+  .dark {
+    --olive-1: 90 6% 7%;
+    --olive-2: 90 4% 9%;
+    --olive-3: 90 3% 13%;
+    --olive-4: 100 4% 16%;
+    --olive-5: 100 3% 19%;
+    --olive-6: 90 4% 22%;
+    --olive-7: 96 4% 27%;
+    --olive-8: 111 4% 37%;
+    --olive-9: 108 5% 42%;
+    --olive-10: 107 4% 47%;
+    --olive-11: 105 5% 69%;
+    --olive-12: 120 6% 93%;
+
+    --lime-1: 77 23% 6%;
+    --lime-2: 90 24% 8%;
+    --lime-3: 93 28% 13%;
+    --lime-4: 92 31% 16%;
+    --lime-5: 91 32% 20%;
+    --lime-6: 92 32% 24%;
+    --lime-7: 91 33% 29%;
+    --lime-8: 90 35% 34%;
+    --lime-9: 81 80% 66%;
+    --lime-10: 78 100% 72%;
+    --lime-11: 80 70% 66%;
+    --lime-12: 80 79% 85%;
+
+    --tomato-1: 0 17% 8%;
+    --tomato-2: 10 24% 10%;
+    --tomato-3: 5 48% 15%;
+    --tomato-4: 4 64% 19%;
+    --tomato-5: 5 62% 23%;
+    --tomato-6: 7 55% 28%;
+    --tomato-7: 9 49% 35%;
+    --tomato-8: 10 50% 45%;
+    --tomato-9: 10 78% 54%;
+    --tomato-10: 11 82% 59%;
+    --tomato-11: 12 100% 75%;
+    --tomato-12: 10 86% 89%;
+  }
+}
+
+@layer base {
+  :root {
+    --background: var(--olive-1);
+    --foreground: var(--olive-12);
+    --card: var(--olive-2);
+    --card-foreground: var(--olive-12);
+    --popover: var(--olive-2);
+    --popover-foreground: var(--olive-12);
+    --primary: var(--lime-9);
+    --primary-foreground: var(--lime-12);
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: var(--olive-2);
+    --muted-foreground: var(--olive-11);
+    --accent: var(--olive-3);
+    --accent-foreground: var(--olive-12);
+    --destructive: var(--tomato-9);
+    --destructive-foreground: var(--tomato-12);
+    --border: var(--olive-6);
+    --input: var(--olive-6);
+    --ring: var(--lime-7);
+    --radius: 0.5rem;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+  }
+
+  .dark {
+    --background: var(--olive-1);
+    --foreground: var(--olive-12);
+    --card: var(--olive-2);
+    --card-foreground: var(--olive-12);
+    --popover: var(--olive-2);
+    --popover-foreground: var(--olive-12);
+    --primary: var(--lime-9);
+    --primary-foreground: var(--lime-1);
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: var(--olive-10);
+    --muted-foreground: var(--olive-11);
+    --accent: var(--olive-3);
+    --accent-foreground: var(--olive-12);
+    --destructive: var(--tomato-9);
+    --destructive-foreground: var(--tomato-12);
+    --border: var(--olive-6);
+    --input: var(--olive-6);
+    --ring: var(--lime-6);
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-muted-foreground selection:bg-primary/50 selection:text-primary-foreground;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply text-foreground;
+  }
+}
