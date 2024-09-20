@@ -26,6 +26,10 @@ export default function DashboardLayout() {
 
   const { data: friendshipRequests } = useFriendshipRequests();
 
+  const pendingRequests = friendshipRequests?.filter(
+    (req) => req.status === "pending"
+  );
+
   return (
     <div className="h-svh p-5 grid grid-cols-[300px_1fr] gap-5">
       <aside>
@@ -45,9 +49,9 @@ export default function DashboardLayout() {
               <UsersIcon className="w-[1.2rem] h-[1.2rem]" />
               <span>Friends</span>
 
-              {friendshipRequests && friendshipRequests.length > 0 && (
+              {pendingRequests && pendingRequests.length > 0 && (
                 <span className="ml-auto text-sm">
-                  {friendshipRequests.length}
+                  {pendingRequests.length}
                 </span>
               )}
             </div>

@@ -1,4 +1,4 @@
-import { User } from "@prisma/client";
+import { Session, User } from "@prisma/client";
 import { FastifyPluginAsync } from "fastify";
 import fastifyPlugin from "fastify-plugin";
 import { z } from "zod";
@@ -92,6 +92,7 @@ const plugin: FastifyPluginAsync = async (fastify) => {
   });
 
   fastify.get("/auth/me", async (request, reply) => {
+    console.log({ user: request.user });
     reply.send(request.user);
   });
 
@@ -101,6 +102,8 @@ const plugin: FastifyPluginAsync = async (fastify) => {
         id: request.sessionId,
       },
     });
+
+    await fastify.cache.del(`session:${request.sessionId}`);
 
     reply.status(204).send();
   });
@@ -127,6 +130,8 @@ const plugin: FastifyPluginAsync = async (fastify) => {
       },
     });
 
+    await fastify.cache.del(`session:${request.sessionId}`);
+
     // todo get photo
 
     reply.status(204).send();
@@ -152,6 +157,27 @@ const plugin: FastifyPluginAsync = async (fastify) => {
     const token = header.replace("Bearer ", "");
 
     // check if token is valid
+    const cachedSessionStr = await fastify.cache.get(`session:${token}`);
+
+    if (cachedSessionStr) {
+      const cachedSession = JSON.parse(cachedSessionStr) as Session & {
+        user: User;
+      };
+
+      if (cachedSession.expiresAt < new Date()) {
+        await fastify.cache.del(`session:${token}`);
+        reply.status(401).send();
+        return;
+      }
+
+      fastify.log.info("Using cached session");
+      fastify.log.info({ user: cachedSession });
+      request.user = cachedSession.user;
+      request.sessionId = cachedSession.id;
+      fastify.log.info({ user: request.user });
+      return;
+    }
+
     const session = await fastify.db.session.findUnique({
       where: {
         id: token,
@@ -168,6 +194,8 @@ const plugin: FastifyPluginAsync = async (fastify) => {
       reply.status(401).send();
       return;
     }
+
+    await fastify.cache.set(`session:${token}`, JSON.stringify(session));
 
     // attach user to request
     request.user = session.user;

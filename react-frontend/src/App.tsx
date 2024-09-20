@@ -34,16 +34,20 @@ const FriendshipRequestsSentPage = lazy(
   () => import("@/features/friendship/pages/friendship-requests-sent-page")
 );
 
+const FriendshipRequestsReceivedPage = lazy(
+  () => import("@/features/friendship/pages/friendship-requests-received-page")
+);
+
 const queryClient = new QueryClient();
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme="dark" storageKey="ui-theme">
-        <AuthProvider>
-          <TooltipProvider>
-            <Toaster />
-            <BrowserRouter>
+      <BrowserRouter>
+        <ThemeProvider defaultTheme="dark" storageKey="ui-theme">
+          <AuthProvider>
+            <TooltipProvider>
+              <Toaster />
               <Suspense fallback={<Loader />}>
                 <Routes>
                   <Route path="*" Component={NotFoundPage} />
@@ -59,15 +63,19 @@ function App() {
                           path="requests-sent"
                           Component={FriendshipRequestsSentPage}
                         />
+                        <Route
+                          path="requests"
+                          Component={FriendshipRequestsReceivedPage}
+                        />
                       </Route>
                     </Route>
                   </Route>
                 </Routes>
               </Suspense>
-            </BrowserRouter>
-          </TooltipProvider>
-        </AuthProvider>
-      </ThemeProvider>
+            </TooltipProvider>
+          </AuthProvider>
+        </ThemeProvider>
+      </BrowserRouter>
     </QueryClientProvider>
   );
 }

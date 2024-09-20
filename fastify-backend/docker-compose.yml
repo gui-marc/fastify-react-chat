@@ -1,0 +1,19 @@
+# Redis and maildev
+
+version: '3.7'
+
+services:
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    environment:
+      - REDIS_USERNAME=redis
+      - REDIS_PASSWORD=redis
+
+  maildev:
+    image: djfarrelly/maildev
+    container_name: maildev
+    ports:
+      - "1080:80"

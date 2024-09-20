@@ -29,7 +29,7 @@ export function AsyncButton({
 
       <span
         className={cn(
-          "transition-opacity",
+          "transition-opacity inline-flex items-center justify-center gap-2",
           isLoading ? "opacity-0" : "opacity-100"
         )}
         aria-hidden={isLoading}

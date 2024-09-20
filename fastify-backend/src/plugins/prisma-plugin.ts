@@ -8,15 +8,12 @@ declare module "fastify" {
   }
 }
 
-interface PrismaPluginOptions {}
-
-const ConnectPrisma: FastifyPluginAsync<PrismaPluginOptions> = async (
-  fastify,
-  options
-) => {
+const ConnectPrisma: FastifyPluginAsync = async (fastify) => {
   try {
-    fastify.log.info("Connecting to Prisma");
+    fastify.log.info("[PRISMA] - Connecting");
     const client = new PrismaClient();
+    await client.$connect();
+    fastify.log.info("[PRISMA] - Connected");
     fastify.decorate("db", client);
   } catch (error) {
     fastify.log.error(error);

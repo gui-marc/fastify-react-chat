@@ -3,6 +3,7 @@ import { Separator } from "@/components/ui/separator";
 import { UserPlusIcon, UsersIcon } from "lucide-react";
 import { Link, Navigate, Outlet, useMatch } from "react-router-dom";
 import AddFriendDialog from "../components/add-friend-dialog";
+import { useFriendshipRequests } from "../hooks/use-friendship-requests";
 
 function NavLink({ children, to }: { children: React.ReactNode; to: string }) {
   const isCurrent = useMatch(to);
@@ -18,6 +19,12 @@ export default function FriendshipsPage() {
   const location = useMatch("/friendships");
   const isSubRoute = location?.pathname !== "/friendships";
 
+  const { data: friendshipRequests } = useFriendshipRequests();
+
+  const pendingRequests = friendshipRequests?.filter(
+    (req) => req.status === "pending"
+  );
+
   if (!isSubRoute) {
     return <Navigate to="/friendships/all" />;
   }
@@ -32,7 +39,12 @@ export default function FriendshipsPage() {
 
         <nav className="flex items-center gap-3">
           <NavLink to="/friendships/all">All</NavLink>
-          <NavLink to="/friendships/requests">Requests</NavLink>
+          <NavLink to="/friendships/requests">
+            Requests{" "}
+            {pendingRequests && pendingRequests.length > 0
+              ? " - " + pendingRequests.length
+              : ""}
+          </NavLink>
           <NavLink to="/friendships/requests-sent">Sent</NavLink>
         </nav>
 

@@ -91,7 +91,7 @@ const plugin: FastifyPluginAsync = async (fastify) => {
 
   fastify.get("/friendships/requests", async (request, reply) => {
     const friendshipRequests = await fastify.db.friendshipRequest.findMany({
-      where: { toUserId: request.user.id },
+      where: { toUserId: request.user.id, status: "pending" },
       include: { fromUser: true },
       orderBy: { createdAt: "desc" },
     });
@@ -169,6 +169,8 @@ const plugin: FastifyPluginAsync = async (fastify) => {
   );
 
   fastify.get("/friendships", async (request, reply) => {
+    fastify.log.info("Getting friends");
+
     const friends = await fastify.db.friendship.findMany({
       where: {
         OR: [{ user1Id: request.user.id }, { user2Id: request.user.id }],
@@ -178,6 +180,8 @@ const plugin: FastifyPluginAsync = async (fastify) => {
         user2: true,
       },
     });
+
+    fastify.log.info(`Friends found ${friends.length}`);
 
     reply.send(
       friends.map((friendship) =>

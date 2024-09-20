@@ -4,7 +4,7 @@ import { getFriendRequests } from "../api";
 export function useFriendshipRequests() {
   const data = useQuery({
     queryKey: ["friendship-requests", "received"],
-    queryFn: () => getFriendRequests,
+    queryFn: getFriendRequests,
   });
 
   return data;

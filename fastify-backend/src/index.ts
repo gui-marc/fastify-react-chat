@@ -8,6 +8,8 @@ import AuthenticationPlugin from "./features/authentication";
 import ZodValidatorPlugin from "./features/zod-validator";
 import FriendshipPlugin from "./features/friendship";
 import UsersPlugin from "./features/users";
+import RedisPlugin from "./plugins/redis-plugin";
+import SocketPlugin from "./plugins/socket-plugin";
 
 const PORT = process.env.PORT || 3000;
 
@@ -30,6 +32,8 @@ const fastify = Fastify({
 });
 
 fastify.register(PrismaPlugin);
+fastify.register(RedisPlugin);
+// fastify.register(SocketPlugin);
 fastify.register(ZodValidatorPlugin);
 fastify.register(AuthenticationPlugin);
 fastify.register(FriendshipPlugin);

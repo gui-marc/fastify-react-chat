@@ -20,6 +20,8 @@
     "fastify-plugin": "^5.0.0",
     "pino": "^9.4.0",
     "pino-pretty": "^11.2.2",
+    "redis": "^4.7.0",
+    "socket.io": "^4.7.5",
     "zod": "^3.23.8"
   },
   "devDependencies": {

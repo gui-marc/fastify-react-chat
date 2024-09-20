@@ -2,15 +2,25 @@ import { Input } from "@/components/ui/input";
 import UserAvatar from "@/components/user-avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFriendshipRequestsSent } from "../hooks/use-friendship-requests-sent";
+import { cn } from "@/lib/utils";
 
 function RequestItem({ request }: { request: FriendshipRequestSent }) {
   return (
-    <li>
-      <div>
-        <UserAvatar user={request.toUser} />
-        <span>{request.toUser.name}</span>
-      </div>
-      <span>{request.status}</span>
+    <li className="flex items-center gap-4">
+      <UserAvatar user={request.toUser} />
+      <h3>{request.toUser.name}</h3>
+      <p>{request.toUser.email}</p>
+      <span
+        className={cn(
+          "ml-auto px-3 py-1.5 rounded-md text-xs uppercase tracking-wide font-medium",
+          {
+            "bg-accent text-accent-foreground": request.status === "pending",
+            "bg-error text-error-contrast": request.status === "rejected",
+          }
+        )}
+      >
+        {request.status}
+      </span>
     </li>
   );
 }

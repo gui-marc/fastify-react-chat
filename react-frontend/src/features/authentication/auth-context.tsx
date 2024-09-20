@@ -1,6 +1,7 @@
 import { client } from "@/api/client";
 import * as AuthAPI from "./api";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 type AuthContextType = {
   currentUser: User | null;
@@ -13,6 +14,7 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isPending, setIsPending] = useState<boolean>(true);
   const isAuthenticated = useMemo(() => currentUser !== null, [currentUser]);
@@ -27,8 +29,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   function logout() {
     setIsPending(true);
     setCurrentUser(null);
-    localStorage.removeItem("token");
-    AuthAPI.logout().finally(() => setIsPending(false));
+    AuthAPI.logout().finally(() => {
+      setIsPending(false);
+      localStorage.removeItem("token");
+    });
+    navigate("/sign-in");
   }
 
   useEffect(() => {
@@ -36,7 +41,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       async (response) => response,
       (error) => {
         if (error.response?.status === 401) {
-          logout();
+          setCurrentUser(null);
+          localStorage.removeItem("token");
         }
         return Promise.reject(error);
       }

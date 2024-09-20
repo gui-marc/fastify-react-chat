@@ -5,11 +5,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 function FriendshipItem({ friend }: { friend: User }) {
   return (
-    <li>
-      <div>
-        <UserAvatar user={friend} />
-        <span>{friend.name}</span>
-      </div>
+    <li className="flex items-center gap-4">
+      <UserAvatar user={friend} />
+      <h3>{friend.name}</h3>
+      <p>{friend.email}</p>
     </li>
   );
 }

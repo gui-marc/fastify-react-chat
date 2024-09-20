@@ -25,13 +25,13 @@ export default function SignInPage() {
     resolver: zodResolver(signInSchema),
   });
 
-  const { mutate, isPending } = useMutation({
+  const { mutateAsync, isPending } = useMutation({
     mutationKey: ["send-passcode"],
     mutationFn: sendPasscode,
   });
 
   async function handleSubmit(data: SignInInput) {
-    await mutate(data);
+    await mutateAsync(data);
     navigate("/input-passcode", { state: { email: data.email } });
   }
 
