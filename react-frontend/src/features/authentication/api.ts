@@ -1,5 +1,5 @@
 import { client } from "@/api/client";
-import { PasscodeInput, SignInInput } from "./schemas";
+import { OnboardingInput, PasscodeInput, SignInInput } from "./schemas";
 
 const BASE_URL = "/auth";
 
@@ -19,4 +19,13 @@ export async function verifyPasscode(data: PasscodeInput & { email: string }) {
 export async function getCurrentUser() {
   const response = await client.get<User>(`${BASE_URL}/me`);
   return response.data;
+}
+
+export async function onboardUser(data: OnboardingInput) {
+  const response = await client.post<User>(`${BASE_URL}/onboarding`, data);
+  return response.data;
+}
+
+export async function logout() {
+  await client.post(`${BASE_URL}/logout`);
 }

@@ -6,7 +6,6 @@ import cors from "@fastify/cors";
 import PrismaPlugin from "./plugins/prisma-plugin";
 import AuthenticationPlugin from "./features/authentication";
 import ZodValidatorPlugin from "./features/zod-validator";
-import OnboardingPlugin from "./features/onboarding";
 
 const PORT = process.env.PORT || 3000;
 
@@ -31,7 +30,6 @@ const fastify = Fastify({
 fastify.register(PrismaPlugin);
 fastify.register(ZodValidatorPlugin);
 fastify.register(AuthenticationPlugin);
-fastify.register(OnboardingPlugin);
 fastify.register(cors, {
   origin: ["http://localhost:5173"],
 });

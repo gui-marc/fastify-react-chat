@@ -1,16 +1,31 @@
 import { User } from "@prisma/client";
 import { FastifyPluginAsync } from "fastify";
 import fastifyPlugin from "fastify-plugin";
+import { z } from "zod";
 
 declare module "fastify" {
   interface FastifyRequest {
     user: User;
+    sessionId: string;
   }
 }
 
+const onboardingSchema = z.object({
+  name: z.string().min(2).max(255),
+});
+
+const sendPasscodeSchema = z.object({
+  email: z.string().email(),
+});
+
+const verifyPasscodeSchema = z.object({
+  email: z.string().email(),
+  passcode: z.string().length(6),
+});
+
 const plugin: FastifyPluginAsync = async (fastify) => {
   fastify.post("/auth/send-passcode", async (request, reply) => {
-    const { email } = request.body as { email: string };
+    const { email } = fastify.validate(sendPasscodeSchema, request.body);
 
     const passcode = await fastify.db.sigInPasscode.create({
       data: {
@@ -34,10 +49,10 @@ const plugin: FastifyPluginAsync = async (fastify) => {
   });
 
   fastify.post("/auth/verify-passcode", async (request, reply) => {
-    const { email, passcode } = request.body as {
-      email: string;
-      passcode: string;
-    };
+    const { email, passcode } = fastify.validate(
+      verifyPasscodeSchema,
+      request.body
+    );
 
     const passcodeRecord = await fastify.db.sigInPasscode.findFirst({
       where: {
@@ -80,6 +95,43 @@ const plugin: FastifyPluginAsync = async (fastify) => {
     reply.send(request.user);
   });
 
+  fastify.post("/auth/logout", async (request, reply) => {
+    await fastify.db.session.delete({
+      where: {
+        id: request.sessionId,
+      },
+    });
+
+    reply.status(204).send();
+  });
+
+  fastify.post("/auth/onboarding", async (request, reply) => {
+    const { name } = fastify.validate(onboardingSchema, request.body);
+
+    const currentUser = request.user;
+
+    if (currentUser.onboardingCompleted) {
+      reply.status(400).send({
+        message: "Onboarding already completed",
+      });
+      return;
+    }
+
+    await fastify.db.user.update({
+      where: {
+        id: request.user.id,
+      },
+      data: {
+        name,
+        onboardingCompleted: true,
+      },
+    });
+
+    // todo get photo
+
+    reply.status(204).send();
+  });
+
   // middleware
   fastify.addHook("preHandler", async (request, reply) => {
     // if route is protected
@@ -119,6 +171,7 @@ const plugin: FastifyPluginAsync = async (fastify) => {
 
     // attach user to request
     request.user = session.user;
+    request.sessionId = session.id;
   });
 };
 

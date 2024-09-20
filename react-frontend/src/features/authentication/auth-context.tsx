@@ -1,11 +1,12 @@
-import { getCurrentUser } from "./api";
+import { client } from "@/api/client";
+import * as AuthAPI from "./api";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 type AuthContextType = {
   currentUser: User | null;
   isPending: boolean;
   isAuthenticated: boolean;
-  authenticate: (token: string) => void;
+  authenticate: (token: string) => Promise<User>;
   logout: () => void;
 };
 
@@ -18,14 +19,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   async function authenticate(token: string) {
     localStorage.setItem("token", token);
-    const user = await getCurrentUser();
+    const user = await AuthAPI.getCurrentUser();
     setCurrentUser(user);
+    return user;
   }
 
-  function logout() {
+  async function logout() {
+    await AuthAPI.logout();
     localStorage.removeItem("token");
     setCurrentUser(null);
   }
+
+  useEffect(() => {
+    client.interceptors.response.use(
+      async (response) => response,
+      (error) => {
+        if (error.response?.status === 401) {
+          logout();
+        }
+        return Promise.reject(error);
+      }
+    );
+  }, []);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -33,7 +48,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const abortController = new AbortController();
 
     if (token && !currentUser) {
-      getCurrentUser()
+      AuthAPI.getCurrentUser()
         .then((user) => {
           setCurrentUser(user);
         })

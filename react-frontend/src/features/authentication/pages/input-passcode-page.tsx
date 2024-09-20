@@ -38,6 +38,7 @@ export default function InputPasscodePage() {
   } = useLocation();
 
   const { mutateAsync, isPending } = useMutation({
+    mutationKey: ["verify-passcode"],
     mutationFn: verifyPasscode,
   });
 
@@ -47,8 +48,12 @@ export default function InputPasscodePage() {
 
   async function onSubmit(data: PasscodeInput) {
     const { token } = await mutateAsync({ ...data, email });
-    await authenticate(token);
-    navigate("/");
+    const user = await authenticate(token);
+    if (user.onboardingCompleted) {
+      navigate("/");
+    } else {
+      navigate("/onboarding");
+    }
   }
 
   return (
@@ -59,6 +64,10 @@ export default function InputPasscodePage() {
         </div>
         <header className="space-y-1">
           <h1 className="font-medium">Enter passcode</h1>
+          <p>
+            The passcode was sent to{" "}
+            <b className="font-medium text-foreground">{email}</b>.
+          </p>
         </header>
 
         <Form {...form}>

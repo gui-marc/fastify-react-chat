@@ -5,7 +5,7 @@ import { ThemeProvider } from "./components/theme-provider";
 import { lazy, Suspense } from "react";
 import Loader from "./components/loader";
 import ProtectedRoute from "./features/authentication/components/protected-route";
-import TestingAuth from "./pages/testing-auth";
+import { TooltipProvider } from "./components/ui/tooltip";
 
 const SignInPage = lazy(
   () => import("@/features/authentication/pages/sign-in-page")
@@ -16,6 +16,11 @@ const InputPasscodePage = lazy(
 );
 
 const NotFoundPage = lazy(() => import("@/pages/not-found-page"));
+const OnboardingPage = lazy(
+  () => import("@/features/authentication/pages/onboarding-page")
+);
+
+const TestingAuthPage = lazy(() => import("@/pages/testing-auth"));
 
 const queryClient = new QueryClient();
 
@@ -24,19 +29,22 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="dark" storageKey="ui-theme">
         <AuthProvider>
-          <BrowserRouter>
-            <Suspense fallback={<Loader />}>
-              <Routes>
-                <Route path="*" Component={NotFoundPage} />
-                <Route path="sign-in" Component={SignInPage} />
-                <Route path="input-passcode" Component={InputPasscodePage} />
+          <TooltipProvider>
+            <BrowserRouter>
+              <Suspense fallback={<Loader />}>
+                <Routes>
+                  <Route path="*" Component={NotFoundPage} />
+                  <Route path="sign-in" Component={SignInPage} />
+                  <Route path="input-passcode" Component={InputPasscodePage} />
 
-                <Route Component={ProtectedRoute}>
-                  <Route path="test-auth" Component={TestingAuth} />
-                </Route>
-              </Routes>
-            </Suspense>
-          </BrowserRouter>
+                  <Route Component={ProtectedRoute}>
+                    <Route path="test-auth" Component={TestingAuthPage} />
+                    <Route path="onboarding" Component={OnboardingPage} />
+                  </Route>
+                </Routes>
+              </Suspense>
+            </BrowserRouter>
+          </TooltipProvider>
         </AuthProvider>
       </ThemeProvider>
     </QueryClientProvider>
