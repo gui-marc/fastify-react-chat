@@ -39,7 +39,7 @@ export default function OnboardingPage() {
   async function onSubmit(data: OnboardingInput) {
     await mutateAsync(data);
     await authenticate(localStorage.getItem("token") as string); // Refresh the user
-    navigate("/test-auth");
+    navigate("/");
   }
 
   return (

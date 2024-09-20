@@ -89,6 +89,7 @@
 @layer base {
   :root {
     --background: var(--olive-1);
+    --background--tint: var(--olive-2);
     --foreground: var(--olive-12);
     --card: var(--olive-2);
     --card-foreground: var(--olive-12);

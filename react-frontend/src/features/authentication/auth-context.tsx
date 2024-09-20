@@ -24,10 +24,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return user;
   }
 
-  async function logout() {
-    await AuthAPI.logout();
-    localStorage.removeItem("token");
+  function logout() {
+    setIsPending(true);
     setCurrentUser(null);
+    localStorage.removeItem("token");
+    AuthAPI.logout().finally(() => setIsPending(false));
   }
 
   useEffect(() => {

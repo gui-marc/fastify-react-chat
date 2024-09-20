@@ -24,6 +24,12 @@ model User {
 
   signInPasscodes SigInPasscode[]
   sessions        Session[]
+
+  friendships1 Friendship[] @relation("friendship-1")
+  friendships2 Friendship[] @relation("friendship-2")
+
+  friendshipRequestsFrom FriendshipRequest[] @relation("friendship-requests-from")
+  friendshipRequestsTo   FriendshipRequest[] @relation("friendship-requests-to")
 }
 
 model SigInPasscode {
@@ -52,4 +58,31 @@ model Image {
   data Bytes
 
   users User[]
+}
+
+model FriendshipRequest {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+
+  status String @default("pending") // pending | accepted | rejected
+
+  fromUser   User   @relation(fields: [fromUserId], references: [id], name: "friendship-requests-from")
+  fromUserId String
+
+  toUser   User   @relation(fields: [toUserId], references: [id], name: "friendship-requests-to")
+  toUserId String
+
+  @@unique([fromUserId, toUserId])
+}
+
+model Friendship {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user1   User   @relation(fields: [user1Id], references: [id], name: "friendship-1")
+  user1Id String
+
+  user2   User   @relation(fields: [user2Id], references: [id], name: "friendship-2")
+  user2Id String
 }

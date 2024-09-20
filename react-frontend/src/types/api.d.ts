@@ -11,3 +11,25 @@ declare interface Image {
   name: string;
   url: string;
 }
+
+declare interface FriendshipRequestReceived {
+  id: string;
+  status: "pending" | "accepted" | "rejected";
+  createdAt: Date;
+  fromUser: User;
+}
+
+declare interface FriendshipRequestSent {
+  id: string;
+  status: "pending" | "accepted" | "rejected";
+  createdAt: Date;
+  toUser: User;
+}
+
+declare interface FriendshipRequest {
+  id: string;
+  status: "pending" | "accepted" | "rejected";
+  createdAt: Date;
+  fromUser: User;
+  toUser: User;
+}

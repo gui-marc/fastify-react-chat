@@ -11,10 +11,14 @@ import { TooltipPortal } from "@radix-ui/react-tooltip";
 export default function LogoutButton({ ...props }: ButtonProps) {
   const { logout } = useAuthLogged();
 
+  async function onClick() {
+    await logout();
+  }
+
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <Button variant="outline" size="icon" onClick={logout} {...props}>
+        <Button variant="outline" size="icon" onClick={onClick} {...props}>
           <LogOutIcon className="h-[1.2rem] w-[1.2rem]" />
           <span className="sr-only">Logout</span>
         </Button>
