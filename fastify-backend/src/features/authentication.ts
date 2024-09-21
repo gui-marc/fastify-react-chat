@@ -142,7 +142,10 @@ const plugin: FastifyPluginAsync = async (fastify) => {
     // if route is protected
     const publicRoutes = ["/auth/send-passcode", "/auth/verify-passcode"];
 
-    if (publicRoutes.includes(request.url)) {
+    if (
+      publicRoutes.includes(request.url) ||
+      request.url.startsWith("/socket.io")
+    ) {
       return;
     }
 
@@ -170,11 +173,8 @@ const plugin: FastifyPluginAsync = async (fastify) => {
         return;
       }
 
-      fastify.log.info("Using cached session");
-      fastify.log.info({ user: cachedSession });
       request.user = cachedSession.user;
       request.sessionId = cachedSession.id;
-      fastify.log.info({ user: request.user });
       return;
     }
 

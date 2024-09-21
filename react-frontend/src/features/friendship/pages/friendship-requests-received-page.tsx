@@ -55,10 +55,10 @@ function Empty({ search }: { search: string }) {
   );
 }
 function RequestItem({ request }: { request: FriendshipRequestReceived }) {
-  const { isPending, mutate } = useAcceptFriendRequest(request.id);
+  const { isPending, mutate } = useAcceptFriendRequest();
 
   function onClick() {
-    mutate();
+    mutate(request.id);
   }
 
   return (

@@ -3,12 +3,12 @@ import { acceptFriendRequest } from "../api";
 import { toast } from "sonner";
 import { AxiosError } from "axios";
 
-export default function useAcceptFriendRequest(requestId: string) {
+export default function useAcceptFriendRequest() {
   const queryClient = useQueryClient();
 
   const m = useMutation({
     mutationKey: ["friendship-requests", "accept"],
-    mutationFn: () => acceptFriendRequest(requestId),
+    mutationFn: (requestId: string) => acceptFriendRequest(requestId),
     onSuccess: (data) => {
       queryClient.invalidateQueries({
         queryKey: ["friendship-requests", "received"],
@@ -20,7 +20,7 @@ export default function useAcceptFriendRequest(requestId: string) {
         ["friendship-requests", "received"],
         (prev) => {
           if (!prev) return prev;
-          return prev.filter((r) => r.id !== requestId);
+          return prev.filter((r) => r.id !== data.id);
         }
       );
       queryClient.setQueryData<User[]>(["friendships", "all"], (prev) => {

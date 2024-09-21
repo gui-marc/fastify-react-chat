@@ -46,15 +46,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     client.interceptors.response.use(
       async (response) => response,
-      (error) => {
+      async (error) => {
         if (error.response?.status === 401) {
           setCurrentUser(null);
           localStorage.removeItem("token");
+          await queryClient.invalidateQueries();
+          navigate("/sign-in");
         }
         return Promise.reject(error);
       }
     );
-  }, []);
+  }, [queryClient, navigate]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");

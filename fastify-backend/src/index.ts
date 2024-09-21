@@ -33,7 +33,7 @@ const fastify = Fastify({
 
 fastify.register(PrismaPlugin);
 fastify.register(RedisPlugin);
-// fastify.register(SocketPlugin);
+fastify.register(SocketPlugin);
 fastify.register(ZodValidatorPlugin);
 fastify.register(AuthenticationPlugin);
 fastify.register(FriendshipPlugin);

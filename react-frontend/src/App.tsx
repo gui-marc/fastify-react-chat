@@ -8,6 +8,7 @@ import ProtectedRoute from "./features/authentication/components/protected-route
 import DashboardLayout from "./components/layouts/dashboard-layout";
 import { TooltipProvider } from "./components/ui/tooltip";
 import { Toaster } from "./components/ui/sonner";
+import SocketProvider from "./context/socket-context";
 
 const SignInPage = lazy(
   () => import("@/features/authentication/pages/sign-in-page")
@@ -38,7 +39,15 @@ const FriendshipRequestsReceivedPage = lazy(
   () => import("@/features/friendship/pages/friendship-requests-received-page")
 );
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+      staleTime: 1000 * 60 * 5,
+    },
+  },
+});
 
 function App() {
   return (
@@ -46,33 +55,38 @@ function App() {
       <BrowserRouter>
         <ThemeProvider defaultTheme="dark" storageKey="ui-theme">
           <AuthProvider>
-            <TooltipProvider>
-              <Toaster />
-              <Suspense fallback={<Loader />}>
-                <Routes>
-                  <Route path="*" Component={NotFoundPage} />
-                  <Route path="sign-in" Component={SignInPage} />
-                  <Route path="input-passcode" Component={InputPasscodePage} />
+            <SocketProvider>
+              <TooltipProvider>
+                <Toaster />
+                <Suspense fallback={<Loader />}>
+                  <Routes>
+                    <Route path="*" Component={NotFoundPage} />
+                    <Route path="sign-in" Component={SignInPage} />
+                    <Route
+                      path="input-passcode"
+                      Component={InputPasscodePage}
+                    />
 
-                  <Route Component={ProtectedRoute}>
-                    <Route path="onboarding" Component={OnboardingPage} />
-                    <Route path="/" Component={DashboardLayout}>
-                      <Route path="friendships" Component={FriendshipsPage}>
-                        <Route path="all" Component={AllFriendshipsPage} />
-                        <Route
-                          path="requests-sent"
-                          Component={FriendshipRequestsSentPage}
-                        />
-                        <Route
-                          path="requests"
-                          Component={FriendshipRequestsReceivedPage}
-                        />
+                    <Route Component={ProtectedRoute}>
+                      <Route path="onboarding" Component={OnboardingPage} />
+                      <Route path="/" Component={DashboardLayout}>
+                        <Route path="friendships" Component={FriendshipsPage}>
+                          <Route path="all" Component={AllFriendshipsPage} />
+                          <Route
+                            path="requests-sent"
+                            Component={FriendshipRequestsSentPage}
+                          />
+                          <Route
+                            path="requests"
+                            Component={FriendshipRequestsReceivedPage}
+                          />
+                        </Route>
                       </Route>
                     </Route>
-                  </Route>
-                </Routes>
-              </Suspense>
-            </TooltipProvider>
+                  </Routes>
+                </Suspense>
+              </TooltipProvider>
+            </SocketProvider>
           </AuthProvider>
         </ThemeProvider>
       </BrowserRouter>

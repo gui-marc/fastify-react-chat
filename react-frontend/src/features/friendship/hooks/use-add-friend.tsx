@@ -9,7 +9,6 @@ export default function useAddFriend() {
   const mutation = useMutation({
     mutationFn: sendFriendRequest,
     onSuccess: (data) => {
-      console.log({ data });
       queryClient.invalidateQueries({
         queryKey: ["friendship-requests", "sent"],
       });
@@ -23,7 +22,6 @@ export default function useAddFriend() {
           return [...prev, data];
         }
       );
-
       toast.success(`Sent friend request to ${data.toUser.name}`);
     },
     onError: (error) => {

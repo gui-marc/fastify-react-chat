@@ -29,7 +29,16 @@ declare module "socket.io" {
 const plugin: FastifyPluginAsync = async (fastify) => {
   fastify.log.info("[SOCKET] - Connecting");
 
-  const socket = new Server(fastify.server);
+  const socket = new Server({
+    cors: {
+      origin: "http://localhost:5173",
+      methods: ["GET", "POST"],
+      allowedHeaders: ["Authorization"],
+      credentials: true,
+    },
+  });
+
+  socket.listen(parseInt(process.env.SOCKET_PORT ?? "3005"));
 
   fastify.log.info("[SOCKET] - Connected");
 
@@ -60,6 +69,18 @@ const plugin: FastifyPluginAsync = async (fastify) => {
     } catch (error) {
       return next(new Error("Authentication error"));
     }
+  });
+
+  fastify.addHook("onReady", async () => {
+    fastify.socket.on("connection", (socket) => {
+      const user = socket.session.user;
+      socket.join(`user:${user.id}`);
+      fastify.log.info(`[SOCKET] - Connected ${socket.id} - ${user.email}`);
+    });
+
+    fastify.socket.on("disconnect", (socket) => {
+      fastify.log.info(`[SOCKET] - Disconnected ${socket.id}`);
+    });
   });
 
   fastify.addHook("onClose", async () => {

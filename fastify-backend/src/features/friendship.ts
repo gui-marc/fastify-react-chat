@@ -70,12 +70,19 @@ const plugin: FastifyPluginAsync = async (fastify) => {
         },
       });
 
-      await fastify.db.friendshipRequest.update({
-        where: { id: simetricFriendshipRequest.id },
-        data: { status: "accepted" },
-      });
+      const friendshipRequestUpdated =
+        await fastify.db.friendshipRequest.update({
+          where: { id: simetricFriendshipRequest.id },
+          data: { status: "accepted" },
+          include: { toUser: true },
+        });
+
+      fastify.socket
+        .to(`user:${friend.id}`)
+        .emit("friendship-request-accepted", friendshipRequestUpdated);
 
       reply.status(204).send();
+      return;
     }
 
     const friendshipRequest = await fastify.db.friendshipRequest.create({
@@ -83,8 +90,12 @@ const plugin: FastifyPluginAsync = async (fastify) => {
         fromUser: { connect: { id: request.user.id } },
         toUser: { connect: { id: friend.id } },
       },
-      include: { toUser: true },
+      include: { toUser: true, fromUser: true },
     });
+
+    fastify.socket
+      .to(`user:${friend.id}`)
+      .emit("friendship-request", friendshipRequest);
 
     reply.send(friendshipRequest);
   });
@@ -158,8 +169,12 @@ const plugin: FastifyPluginAsync = async (fastify) => {
       const requestUpdated = await fastify.db.friendshipRequest.update({
         where: { id: friendshipRequest.id },
         data: { status: "accepted" },
-        include: { fromUser: true },
+        include: { fromUser: true, toUser: true },
       });
+
+      fastify.socket
+        .to(`user:${requestUpdated.fromUser.id}`)
+        .emit("friendship-request-accepted", requestUpdated);
 
       reply.send(requestUpdated);
     }
@@ -175,6 +190,7 @@ const plugin: FastifyPluginAsync = async (fastify) => {
 
       const friendshipRequest = await fastify.db.friendshipRequest.findFirst({
         where: { id: requestId, toUserId: request.user.id },
+        include: { fromUser: true },
       });
 
       if (!friendshipRequest) {
@@ -186,6 +202,10 @@ const plugin: FastifyPluginAsync = async (fastify) => {
         where: { id: friendshipRequest.id },
         data: { status: "rejected" },
       });
+
+      fastify.socket
+        .to(`user:${friendshipRequest.fromUserId}`)
+        .emit("friendship-request-rejected", friendshipRequest);
 
       reply.status(204).send();
     }
