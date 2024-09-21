@@ -2,6 +2,7 @@ import { render } from "@react-email/components";
 import { FastifyPluginAsync } from "fastify";
 import fastifyPlugin from "fastify-plugin";
 import nodemailer from "nodemailer";
+import nodemailerSendgrid from "nodemailer-sendgrid";
 
 declare module "fastify" {
   interface FastifyInstance {
@@ -20,23 +21,29 @@ declare module "fastify" {
 }
 
 const plugin: FastifyPluginAsync = async (fastify, options) => {
-  const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT),
-    secure: process.env.SMTP_SECURE === "true",
-    tls: {
-      rejectUnauthorized: process.env.SMTP_SECURE === "true",
-    },
-    requireTLS: process.env.SMTP_SECURE === "true",
-    ...(process.env.SMTP_SECURE === "true"
-      ? {
-          auth: {
-            user: process.env.SMTP_USER,
-            pass: process.env.SMTP_PASS,
-          },
-        }
-      : {}),
-  });
+  const transporter = process.env.SENDGRID_API_KEY
+    ? nodemailer.createTransport(
+        nodemailerSendgrid({
+          apiKey: process.env.SENDGRID_API_KEY,
+        })
+      )
+    : nodemailer.createTransport({
+        host: process.env.SMTP_HOST,
+        port: Number(process.env.SMTP_PORT),
+        secure: process.env.SMTP_SECURE === "true",
+        tls: {
+          rejectUnauthorized: process.env.SMTP_SECURE === "true",
+        },
+        requireTLS: process.env.SMTP_SECURE === "true",
+        ...(process.env.SMTP_SECURE === "true"
+          ? {
+              auth: {
+                user: process.env.SMTP_USER,
+                pass: process.env.SMTP_PASS,
+              },
+            }
+          : {}),
+      });
 
   async function sendEmail({
     to,
