@@ -1,12 +1,12 @@
 import "dotenv/config";
 
-import PrismaPlugin from "./plugins/prisma-plugin";
-import AuthenticationPlugin from "./features/authentication";
-import ZodValidatorPlugin from "./features/zod-validator";
-import FriendshipPlugin from "./features/friendship";
-import UsersPlugin from "./features/users";
-import RedisPlugin from "./plugins/redis-plugin";
-import SocketPlugin from "./plugins/socket-plugin";
+// import PrismaPlugin from "./plugins/prisma-plugin";
+// import AuthenticationPlugin from "./features/authentication";
+// import ZodValidatorPlugin from "./features/zod-validator";
+// import FriendshipPlugin from "./features/friendship";
+// import UsersPlugin from "./features/users";
+// import RedisPlugin from "./plugins/redis-plugin";
+// import SocketPlugin from "./plugins/socket-plugin";
 import HealthCheckPlugin from "./features/health-check";
 import Fastify from "fastify";
 import cors from "@fastify/cors";
@@ -37,9 +37,9 @@ fastify.register(cors, {
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
 });
-fastify.register(PrismaPlugin);
-fastify.register(RedisPlugin);
-fastify.register(SocketPlugin);
+// fastify.register(PrismaPlugin);
+// fastify.register(RedisPlugin);
+// fastify.register(SocketPlugin);
 // fastify.register(ZodValidatorPlugin);
 // fastify.register(AuthenticationPlugin);
 // fastify.register(FriendshipPlugin);
