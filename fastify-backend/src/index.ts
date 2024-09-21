@@ -40,10 +40,10 @@ fastify.register(cors, {
 fastify.register(PrismaPlugin);
 fastify.register(RedisPlugin);
 fastify.register(SocketPlugin);
-fastify.register(ZodValidatorPlugin);
-fastify.register(AuthenticationPlugin);
-fastify.register(FriendshipPlugin);
-fastify.register(UsersPlugin);
+// fastify.register(ZodValidatorPlugin);
+// fastify.register(AuthenticationPlugin);
+// fastify.register(FriendshipPlugin);
+// fastify.register(UsersPlugin);
 fastify.register(HealthCheckPlugin);
 
 fastify.setErrorHandler((error, request, reply) => {
