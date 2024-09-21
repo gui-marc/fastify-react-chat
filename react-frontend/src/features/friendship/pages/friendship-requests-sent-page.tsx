@@ -3,8 +3,57 @@ import UserAvatar from "@/components/user-avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFriendshipRequestsSent } from "../hooks/use-friendship-requests-sent";
 import { cn } from "@/lib/utils";
+import { AsyncButton } from "@/components/ui/async-button";
+import useCancelFriendRequest from "../hooks/use-cancel-friend-request";
+import FadeIn from "@/components/transitions/fade-in";
+import {
+  EmptyState,
+  EmptyStateDescription,
+  EmptyStateIcon,
+  EmptyStateTitle,
+} from "@/components/empty-state";
+import { useState } from "react";
+import AddFriendDialog from "../components/add-friend-dialog";
+import { Button } from "@/components/ui/button";
+import { HeartPulseIcon, UserPlusIcon } from "lucide-react";
+
+function Empty({ search }: { search: string }) {
+  const isEmptySearch = search.trim() === "";
+
+  return (
+    <EmptyState className="min-h-[60svh]">
+      <EmptyStateIcon Icon={HeartPulseIcon} />
+      {isEmptySearch ? (
+        <EmptyStateTitle>No friend requests sent</EmptyStateTitle>
+      ) : (
+        <EmptyStateTitle>
+          No friend pending requests sent found for "{search}"
+        </EmptyStateTitle>
+      )}
+      {isEmptySearch ? (
+        <EmptyStateDescription>
+          You don't have any pending friend requests sent. Search for users to
+          add them as friends.
+        </EmptyStateDescription>
+      ) : (
+        <EmptyStateDescription>
+          We couldn't find any pending friend requests matching your search. Try
+          another query.
+        </EmptyStateDescription>
+      )}
+      <AddFriendDialog>
+        <Button variant="outline" className="gap-2 mt-5">
+          <UserPlusIcon className="w-[1.2rem] h-[1.2rem]" />
+          Add friend
+        </Button>
+      </AddFriendDialog>
+    </EmptyState>
+  );
+}
 
 function RequestItem({ request }: { request: FriendshipRequestSent }) {
+  const { mutate, isPending } = useCancelFriendRequest(request.id);
+
   return (
     <li className="flex items-center gap-4">
       <UserAvatar user={request.toUser} />
@@ -21,6 +70,15 @@ function RequestItem({ request }: { request: FriendshipRequestSent }) {
       >
         {request.status}
       </span>
+      <AsyncButton
+        size="sm"
+        variant="ghost"
+        isLoading={isPending}
+        disabled={request.status !== "pending"}
+        onClick={() => mutate()}
+      >
+        Cancel
+      </AsyncButton>
     </li>
   );
 }
@@ -36,23 +94,38 @@ function Loading() {
 }
 
 export default function AllFriendshipsPage() {
+  const [search, setSearch] = useState("");
   const { data: requests } = useFriendshipRequestsSent();
+
+  const filteredRequests = requests?.filter(
+    (request) =>
+      request.toUser.name.toLowerCase().includes(search.toLocaleLowerCase()) ||
+      request.toUser.email.toLowerCase().includes(search.toLocaleLowerCase())
+  );
 
   return (
     <div>
-      <Input placeholder="Search for a friend..." className="w-full mb-5" />
+      <Input
+        onChange={(e) => setSearch(e.target.value)}
+        placeholder="Search for a friend..."
+        className="w-full mb-5"
+      />
 
-      {!requests && <Loading />}
+      <FadeIn>
+        {!filteredRequests && <Loading />}
 
-      {requests && requests.length === 0 && <p>No requests sent yet.</p>}
+        {filteredRequests && filteredRequests.length === 0 && (
+          <Empty search={search} />
+        )}
 
-      {requests && requests.length > 0 && (
-        <ol className="grid gap-3">
-          {requests.map((request) => (
-            <RequestItem key={request.id} request={request} />
-          ))}
-        </ol>
-      )}
+        {filteredRequests && filteredRequests.length > 0 && (
+          <ol className="grid gap-3">
+            {filteredRequests.map((request) => (
+              <RequestItem key={request.id} request={request} />
+            ))}
+          </ol>
+        )}
+      </FadeIn>
     </div>
   );
 }

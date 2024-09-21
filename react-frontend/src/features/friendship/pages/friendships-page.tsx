@@ -1,9 +1,18 @@
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { UserPlusIcon, UsersIcon } from "lucide-react";
+import { LoaderIcon, UserPlusIcon, UsersIcon } from "lucide-react";
 import { Link, Navigate, Outlet, useMatch } from "react-router-dom";
 import AddFriendDialog from "../components/add-friend-dialog";
 import { useFriendshipRequests } from "../hooks/use-friendship-requests";
+import { Suspense } from "react";
+
+function Loading() {
+  return (
+    <div className="min-h-[60svh] grid place-items-center">
+      <LoaderIcon className="w-[1.2rem] h-[1.2rem] animate-spin" />
+    </div>
+  );
+}
 
 function NavLink({ children, to }: { children: React.ReactNode; to: string }) {
   const isCurrent = useMatch(to);
@@ -49,7 +58,7 @@ export default function FriendshipsPage() {
         </nav>
 
         <AddFriendDialog>
-          <Button size="sm" className="ml-auto">
+          <Button size="sm" className="ml-auto gap-1.5">
             <UserPlusIcon className="w-[1rem] h-[1rem]" />
             Add friend
           </Button>
@@ -57,7 +66,9 @@ export default function FriendshipsPage() {
       </header>
 
       <div className="flex-1">
-        <Outlet />
+        <Suspense fallback={<Loading />}>
+          <Outlet />
+        </Suspense>
       </div>
     </div>
   );

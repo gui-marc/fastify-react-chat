@@ -17,7 +17,7 @@ export async function sendFriendRequest(data: SendFriendRequestInput) {
 }
 
 export async function acceptFriendRequest(requestId: string) {
-  const response = await client.post(
+  const response = await client.post<FriendshipRequestReceived>(
     `${BASE_URL}/requests/${requestId}/accept`
   );
   return response.data;
@@ -27,6 +27,11 @@ export async function rejectFriendRequest(requestId: string) {
   const response = await client.post(
     `${BASE_URL}/requests/${requestId}/reject`
   );
+  return response.data;
+}
+
+export async function cancelFriendRequest(requestId: string) {
+  const response = await client.delete(`${BASE_URL}/requests/${requestId}`);
   return response.data;
 }
 

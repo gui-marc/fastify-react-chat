@@ -13,6 +13,17 @@ export default function useAddFriend() {
       queryClient.invalidateQueries({
         queryKey: ["friendship-requests", "sent"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["friendships", "all"],
+      });
+      queryClient.setQueryData<FriendshipRequestSent[]>(
+        ["friendship-requests", "sent"],
+        (prev) => {
+          if (!prev) return prev;
+          return [...prev, data];
+        }
+      );
+
       toast.success(`Sent friend request to ${data.toUser.name}`);
     },
     onError: (error) => {

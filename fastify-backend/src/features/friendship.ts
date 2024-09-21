@@ -109,6 +109,28 @@ const plugin: FastifyPluginAsync = async (fastify) => {
     reply.send(friendshipRequests);
   });
 
+  fastify.delete("/friendships/requests/:requestId", async (request, reply) => {
+    const { requestId } = fastify.validate(
+      approveFriendshipParamsSchema,
+      request.params
+    );
+
+    const friendshipRequest = await fastify.db.friendshipRequest.findFirst({
+      where: { id: requestId, fromUserId: request.user.id },
+    });
+
+    if (!friendshipRequest) {
+      reply.status(404).send({ message: "Friendship request not found" });
+      return;
+    }
+
+    await fastify.db.friendshipRequest.delete({
+      where: { id: friendshipRequest.id },
+    });
+
+    reply.status(204).send();
+  });
+
   fastify.post(
     "/friendships/requests/:requestId/accept",
     async (request, reply) => {
@@ -133,12 +155,13 @@ const plugin: FastifyPluginAsync = async (fastify) => {
         },
       });
 
-      await fastify.db.friendshipRequest.update({
+      const requestUpdated = await fastify.db.friendshipRequest.update({
         where: { id: friendshipRequest.id },
         data: { status: "accepted" },
+        include: { fromUser: true },
       });
 
-      reply.status(204).send();
+      reply.send(requestUpdated);
     }
   );
 

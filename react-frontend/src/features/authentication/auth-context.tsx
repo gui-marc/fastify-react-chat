@@ -1,7 +1,8 @@
 import { client } from "@/api/client";
 import * as AuthAPI from "./api";
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 
 type AuthContextType = {
   currentUser: User | null;
@@ -14,10 +15,11 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isPending, setIsPending] = useState<boolean>(true);
-  const isAuthenticated = useMemo(() => currentUser !== null, [currentUser]);
+  const isAuthenticated = currentUser !== null;
 
   async function authenticate(token: string) {
     localStorage.setItem("token", token);
@@ -26,14 +28,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return user;
   }
 
-  function logout() {
+  async function logout() {
     setIsPending(true);
     setCurrentUser(null);
-    AuthAPI.logout().finally(() => {
-      setIsPending(false);
+    try {
+      await AuthAPI.logout();
+      await queryClient.invalidateQueries();
+    } catch (error) {
+      console.error(error);
+    } finally {
       localStorage.removeItem("token");
-    });
-    navigate("/sign-in");
+      navigate("/sign-in");
+      setIsPending(false);
+    }
   }
 
   useEffect(() => {
