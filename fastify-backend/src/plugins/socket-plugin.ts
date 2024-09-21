@@ -72,14 +72,17 @@ const plugin: FastifyPluginAsync = async (fastify) => {
         }
       });
 
-      fastify.socket.on("connection", (socket) => {
+      fastify.socket.on("connection", async (socket) => {
         const user = socket.session.user;
         socket.join(`user:${user.id}`);
-        fastify.log.info(`[SOCKET] - Connected ${socket.id} - ${user.email}`);
-      });
 
-      fastify.socket.on("disconnect", (socket) => {
-        fastify.log.info(`[SOCKET] - Disconnected ${socket.id}`);
+        fastify.log.info(`[SOCKET] - Connected ${socket.id} - ${user.email}`);
+        await fastify.cache.set(`user-status:${user.id}`, "online");
+
+        socket.on("disconnect", () => {
+          fastify.log.info(`[SOCKET] - Disconnected ${socket.id}`);
+          fastify.cache.set(`user-status:${user.id}`, "offline");
+        });
       });
     });
 

@@ -229,8 +229,6 @@ const plugin: FastifyPluginAsync = async (fastify) => {
         },
       });
 
-      fastify.log.info(`Friends found ${friends.length}`);
-
       reply.send(
         friends.map((friendship) =>
           friendship.user1Id === request.user.id

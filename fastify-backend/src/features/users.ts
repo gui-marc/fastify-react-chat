@@ -10,6 +10,10 @@ const getUsersSearchSchema = z.object({
   take: z.coerce.number().int().min(1).max(20).default(5),
 });
 
+const userIdParamSchema = z.object({
+  id: z.string(),
+});
+
 const plugin: FastifyPluginAsync = async (fastify) => {
   try {
     fastify.get("/users", async (request, reply) => {
@@ -42,6 +46,18 @@ const plugin: FastifyPluginAsync = async (fastify) => {
       });
 
       reply.send(users);
+    });
+
+    fastify.get("/users/:id/status", async (req, reply) => {
+      const { id } = fastify.validate(userIdParamSchema, req.params);
+
+      let status = await fastify.cache.get(`user-status:${id}`);
+
+      if (status === null) {
+        status = "offline";
+      }
+
+      reply.send(status);
     });
   } catch (error) {
     fastify.log.fatal(error);

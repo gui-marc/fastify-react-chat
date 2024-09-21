@@ -1,6 +1,6 @@
 import { useAuthLogged } from "@/features/authentication/auth-context";
 import { Link, Navigate, Outlet, useLocation } from "react-router-dom";
-import UserAvatar from "../user-avatar";
+import UserAvatar from "@/features/users/components/user-avatar";
 import LogoutButton from "@/features/authentication/components/logout-button";
 import { cn } from "@/lib/utils";
 import { MenuIcon, SearchIcon, UsersIcon } from "lucide-react";

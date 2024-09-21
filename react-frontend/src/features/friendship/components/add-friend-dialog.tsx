@@ -12,7 +12,7 @@ import useAddFriend from "../hooks/use-add-friend";
 import { Input } from "@/components/ui/input";
 import { SearchIcon, UserPlusIcon } from "lucide-react";
 import useSearchUsers from "@/features/users/hooks/use-search-users";
-import UserAvatar from "@/components/user-avatar";
+import UserAvatar from "@/features/users/components/user-avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 

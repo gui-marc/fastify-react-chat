@@ -15,13 +15,6 @@ import {
 import TailwindConfig from "./tailwind-config";
 
 export default function PasscodeEmail({ passcode }: { passcode: number }) {
-  const splitted = passcode.toString().split("");
-  const splittedByTree = splitted.reduce((acc, curr, index) => {
-    const i = Math.floor(index / 3);
-    acc[i] = (acc[i] || "") + curr;
-    return acc;
-  }, [] as string[]);
-
   return (
     <Html>
       <Head />
@@ -38,7 +31,7 @@ export default function PasscodeEmail({ passcode }: { passcode: number }) {
             </Text>
             <Section className="bg-neutral-100 rounded-lg mb-6 px-10 py-3">
               <Text className="text-xl text-center align-middle">
-                {splittedByTree[0]}-{splittedByTree[1]}
+                {passcode}
               </Text>
             </Section>
             <Text className="text-neutral-700">

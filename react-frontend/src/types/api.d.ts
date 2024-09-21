@@ -12,6 +12,8 @@ declare interface Image {
   url: string;
 }
 
+declare type UserStatus = "online" | "offline";
+
 declare interface FriendshipRequestReceived {
   id: string;
   status: "pending" | "accepted" | "rejected";

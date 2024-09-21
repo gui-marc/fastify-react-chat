@@ -1,6 +1,6 @@
 import { Input } from "@/components/ui/input";
 import useGetAllFriends from "../hooks/use-get-all-friends";
-import UserAvatar from "@/components/user-avatar";
+import UserAvatar from "@/features/users/components/user-avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   EmptyState,
@@ -17,7 +17,7 @@ import FadeIn from "@/components/transitions/fade-in";
 function FriendshipItem({ friend }: { friend: User }) {
   return (
     <li className="flex items-center gap-4">
-      <UserAvatar user={friend} />
+      <UserAvatar user={friend} withStatus />
       <h3>{friend.name}</h3>
       <p>{friend.email}</p>
     </li>

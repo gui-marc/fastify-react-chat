@@ -1,5 +1,5 @@
 import { Input } from "@/components/ui/input";
-import UserAvatar from "@/components/user-avatar";
+import UserAvatar from "@/features/users/components/user-avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { useFriendshipRequests } from "../hooks/use-friendship-requests";
