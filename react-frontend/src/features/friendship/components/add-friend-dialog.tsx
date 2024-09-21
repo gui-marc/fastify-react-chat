@@ -67,7 +67,7 @@ export default function AddFriendDialog({ children }: AddFriendDialogProps) {
   return (
     <ResponsiveDialog>
       <ResponsiveDialogTrigger asChild>{children}</ResponsiveDialogTrigger>
-      <ResponsiveDialogContent className="px-6 pb-6">
+      <ResponsiveDialogContent className="px-6 pb-10 sm:pb-5">
         <ResponsiveDialogHeader>
           <ResponsiveDialogTitle>Add friend</ResponsiveDialogTitle>
           <ResponsiveDialogDescription>
