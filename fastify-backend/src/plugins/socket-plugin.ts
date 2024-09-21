@@ -27,31 +27,27 @@ declare module "socket.io" {
 }
 
 const plugin: FastifyPluginAsync = async (fastify) => {
-  fastify.addHook("onReady", async () => {
-    const socket = new Server({
-      cors: {
-        origin: [
-          "http://localhost:5173",
-          "https://fastify-react-chat.vercel.app",
-        ],
-        methods: ["GET", "POST"],
-        allowedHeaders: ["Authorization"],
-        credentials: true,
-      },
-    });
-
-    fastify.decorate("socket", socket);
+  const socket = new Server(fastify.server, {
+    cors: {
+      origin: [
+        "http://localhost:5173",
+        "https://fastify-react-chat.vercel.app",
+      ],
+      methods: ["GET", "POST"],
+      credentials: true,
+      allowedHeaders: ["Authorization"],
+    },
   });
 
+  fastify.decorate("socket", socket);
+
   fastify.addHook("onListen", async () => {
-    fastify.log.info("[SOCKET] - Connecting");
-
-    fastify.socket.listen(parseInt(process.env.SOCKET_PORT ?? "3005"));
-
-    fastify.log.info("[SOCKET] - Connected");
-
     fastify.socket.use(async (socket, next) => {
-      const token = socket.handshake.auth.token;
+      const token =
+        socket.handshake.auth.token ||
+        socket.handshake.headers.authorization?.split(" ")[1];
+
+      console.log("token", token);
 
       if (!token) {
         return next(new Error("Authentication error"));
