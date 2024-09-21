@@ -11,29 +11,33 @@ const getUsersSearchSchema = z.object({
 });
 
 const plugin: FastifyPluginAsync = async (fastify) => {
-  fastify.get("/users", async (request, reply) => {
-    const { search, take } = fastify.validate(
-      getUsersSearchSchema,
-      request.query
-    );
+  try {
+    fastify.get("/users", async (request, reply) => {
+      const { search, take } = fastify.validate(
+        getUsersSearchSchema,
+        request.query
+      );
 
-    if (!search) {
-      reply.send([]);
-      return;
-    }
+      if (!search) {
+        reply.send([]);
+        return;
+      }
 
-    const users = await fastify.db.user.findMany({
-      where: {
-        OR: [
-          { name: { contains: search }, id: { not: request.user.id } },
-          { email: { contains: search }, id: { not: request.user.id } },
-        ],
-      },
-      take,
+      const users = await fastify.db.user.findMany({
+        where: {
+          OR: [
+            { name: { contains: search }, id: { not: request.user.id } },
+            { email: { contains: search }, id: { not: request.user.id } },
+          ],
+        },
+        take,
+      });
+
+      reply.send(users);
     });
-
-    reply.send(users);
-  });
+  } catch (error) {
+    fastify.log.fatal(error);
+  }
 };
 
 const UsersPlugin = fastifyPlugin(plugin);

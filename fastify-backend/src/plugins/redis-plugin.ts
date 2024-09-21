@@ -9,22 +9,26 @@ declare module "fastify" {
 }
 
 const plugin: FastifyPluginAsync = async (fastify) => {
-  fastify.log.info("[REDIS] - Connecting");
+  try {
+    fastify.log.info("[REDIS] - Connecting");
 
-  const redis = createClient({
-    url: process.env.REDIS_URL,
-  });
+    const redis = createClient({
+      url: process.env.REDIS_URL,
+    });
 
-  await redis.connect();
+    await redis.connect();
 
-  fastify.log.info("[REDIS] - Connected");
+    fastify.log.info("[REDIS] - Connected");
 
-  fastify.decorate("cache", redis);
+    fastify.decorate("cache", redis);
 
-  fastify.addHook("onClose", async () => {
-    await redis.disconnect();
-    await redis.quit();
-  });
+    fastify.addHook("onClose", async () => {
+      await redis.disconnect();
+      await redis.quit();
+    });
+  } catch (error) {
+    fastify.log.fatal(error);
+  }
 };
 
 const RedisPlugin = fastifyPlugin(plugin);

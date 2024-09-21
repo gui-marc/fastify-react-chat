@@ -27,69 +27,73 @@ declare module "socket.io" {
 }
 
 const plugin: FastifyPluginAsync = async (fastify) => {
-  const socket = new Server(fastify.server, {
-    cors: {
-      origin: [
-        "http://localhost:5173",
-        "https://fastify-react-chat.vercel.app",
-      ],
-      methods: ["GET", "POST"],
-      credentials: true,
-      allowedHeaders: ["Authorization"],
-    },
-  });
+  try {
+    const socket = new Server(fastify.server, {
+      cors: {
+        origin: [
+          "http://localhost:5173",
+          "https://fastify-react-chat.vercel.app",
+        ],
+        methods: ["GET", "POST"],
+        credentials: true,
+        allowedHeaders: ["Authorization"],
+      },
+    });
 
-  fastify.decorate("socket", socket);
+    fastify.decorate("socket", socket);
 
-  fastify.addHook("onListen", async () => {
-    fastify.socket.use(async (socket, next) => {
-      const token =
-        socket.handshake.auth.token ||
-        socket.handshake.headers.authorization?.split(" ")[1];
+    fastify.addHook("onListen", async () => {
+      fastify.socket.use(async (socket, next) => {
+        const token =
+          socket.handshake.auth.token ||
+          socket.handshake.headers.authorization?.split(" ")[1];
 
-      if (!token) {
-        return next(new Error("Authentication error"));
-      }
-
-      try {
-        const session = await fastify.cache.get(`session:${token}`);
-
-        if (!session) {
+        if (!token) {
           return next(new Error("Authentication error"));
         }
 
-        socket.session = JSON.parse(session) as Session & { user: User };
+        try {
+          const session = await fastify.cache.get(`session:${token}`);
 
-        if (socket.session.expiresAt < new Date()) {
-          await fastify.cache.del(`session:${token}`);
+          if (!session) {
+            return next(new Error("Authentication error"));
+          }
+
+          socket.session = JSON.parse(session) as Session & { user: User };
+
+          if (socket.session.expiresAt < new Date()) {
+            await fastify.cache.del(`session:${token}`);
+            return next(new Error("Authentication error"));
+          }
+
+          return next();
+        } catch (error) {
           return next(new Error("Authentication error"));
         }
+      });
 
-        return next();
-      } catch (error) {
-        return next(new Error("Authentication error"));
-      }
+      fastify.socket.on("connection", (socket) => {
+        const user = socket.session.user;
+        socket.join(`user:${user.id}`);
+        fastify.log.info(`[SOCKET] - Connected ${socket.id} - ${user.email}`);
+      });
+
+      fastify.socket.on("disconnect", (socket) => {
+        fastify.log.info(`[SOCKET] - Disconnected ${socket.id}`);
+      });
     });
 
-    fastify.socket.on("connection", (socket) => {
-      const user = socket.session.user;
-      socket.join(`user:${user.id}`);
-      fastify.log.info(`[SOCKET] - Connected ${socket.id} - ${user.email}`);
+    fastify.addHook("onClose", async () => {
+      fastify.socket.close();
     });
 
-    fastify.socket.on("disconnect", (socket) => {
-      fastify.log.info(`[SOCKET] - Disconnected ${socket.id}`);
+    fastify.addHook("preClose", (done) => {
+      fastify.socket.disconnectSockets();
+      done();
     });
-  });
-
-  fastify.addHook("onClose", async () => {
-    fastify.socket.close();
-  });
-
-  fastify.addHook("preClose", (done) => {
-    fastify.socket.disconnectSockets();
-    done();
-  });
+  } catch (error) {
+    fastify.log.fatal(error);
+  }
 };
 
 const SocketPlugin = fastifyPlugin(plugin);

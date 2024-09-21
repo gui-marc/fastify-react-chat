@@ -9,21 +9,25 @@ declare module "fastify" {
 }
 
 const plugin: FastifyPluginAsync = async (fastify, options) => {
-  fastify.decorate("validate", (schema, data) => {
-    return schema.parse(data);
-  });
+  try {
+    fastify.decorate("validate", (schema, data) => {
+      return schema.parse(data);
+    });
 
-  // Error handler
-  fastify.setErrorHandler((error, request, reply) => {
-    if (error instanceof z.ZodError) {
-      reply.status(400).send({
-        message: "Validation Error",
-        errors: error.errors,
-      });
-    }
+    // Error handler
+    fastify.setErrorHandler((error, request, reply) => {
+      if (error instanceof z.ZodError) {
+        reply.status(400).send({
+          message: "Validation Error",
+          errors: error.errors,
+        });
+      }
 
-    throw error;
-  });
+      throw error;
+    });
+  } catch (error) {
+    fastify.log.fatal(error);
+  }
 };
 
 const ZodValidatorPlugin = fastifyPlugin(plugin);
