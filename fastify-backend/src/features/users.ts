@@ -26,8 +26,16 @@ const plugin: FastifyPluginAsync = async (fastify) => {
       const users = await fastify.db.user.findMany({
         where: {
           OR: [
-            { name: { contains: search }, id: { not: request.user.id } },
-            { email: { contains: search }, id: { not: request.user.id } },
+            {
+              name: { contains: search },
+              id: { not: request.user.id },
+              onboardingCompleted: true,
+            },
+            {
+              email: { contains: search },
+              id: { not: request.user.id },
+              onboardingCompleted: true,
+            },
           ],
         },
         take,
