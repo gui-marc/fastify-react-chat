@@ -21,6 +21,8 @@ const plugin: FastifyPluginAsync = async (fastify, options) => {
         errors: error.errors,
       });
     }
+
+    throw error;
   });
 };
 

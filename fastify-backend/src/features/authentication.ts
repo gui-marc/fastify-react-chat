@@ -92,7 +92,6 @@ const plugin: FastifyPluginAsync = async (fastify) => {
   });
 
   fastify.get("/auth/me", async (request, reply) => {
-    console.log({ user: request.user });
     reply.send(request.user);
   });
 

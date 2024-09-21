@@ -1,6 +1,5 @@
 import { FastifyPluginAsync } from "fastify";
 import fastifyPlugin from "fastify-plugin";
-import { request } from "http";
 import { z } from "zod";
 
 const getUsersSearchSchema = z.object({
