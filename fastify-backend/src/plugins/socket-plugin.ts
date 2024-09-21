@@ -47,8 +47,6 @@ const plugin: FastifyPluginAsync = async (fastify) => {
         socket.handshake.auth.token ||
         socket.handshake.headers.authorization?.split(" ")[1];
 
-      console.log("token", token);
-
       if (!token) {
         return next(new Error("Authentication error"));
       }
@@ -86,6 +84,11 @@ const plugin: FastifyPluginAsync = async (fastify) => {
 
   fastify.addHook("onClose", async () => {
     fastify.socket.close();
+  });
+
+  fastify.addHook("preClose", (done) => {
+    fastify.socket.disconnectSockets();
+    done();
   });
 };
 
