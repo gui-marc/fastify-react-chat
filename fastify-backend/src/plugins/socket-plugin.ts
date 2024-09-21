@@ -31,7 +31,10 @@ const plugin: FastifyPluginAsync = async (fastify) => {
 
   const socket = new Server({
     cors: {
-      origin: "http://localhost:5173",
+      origin: [
+        "http://localhost:5173",
+        "https://fastify-react-chat.vercel.app",
+      ],
       methods: ["GET", "POST"],
       allowedHeaders: ["Authorization"],
       credentials: true,

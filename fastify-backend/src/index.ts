@@ -39,7 +39,7 @@ fastify.register(AuthenticationPlugin);
 fastify.register(FriendshipPlugin);
 fastify.register(UsersPlugin);
 fastify.register(cors, {
-  origin: ["http://localhost:5173"],
+  origin: ["http://localhost:5173", "https://fastify-react-chat.vercel.app"],
 });
 
 const start = async () => {
