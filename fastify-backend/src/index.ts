@@ -7,6 +7,7 @@ import FriendshipPlugin from "./features/friendship";
 import UsersPlugin from "./features/users";
 import RedisPlugin from "./plugins/redis-plugin";
 import SocketPlugin from "./plugins/socket-plugin";
+import MailerPlugin from "./plugins/mailer-plugin";
 import HealthCheckPlugin from "./features/health-check";
 import Fastify from "fastify";
 import cors from "@fastify/cors";
@@ -40,6 +41,7 @@ fastify.register(cors, {
 fastify.register(PrismaPlugin);
 fastify.register(RedisPlugin);
 fastify.register(SocketPlugin);
+fastify.register(MailerPlugin);
 fastify.register(ZodValidatorPlugin);
 fastify.register(AuthenticationPlugin);
 fastify.register(FriendshipPlugin);

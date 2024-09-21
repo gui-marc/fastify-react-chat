@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { toast } from "sonner";
 
 const client = axios.create({
@@ -28,6 +28,9 @@ client.interceptors.response.use(
   (error) => {
     if (error.code === "ECONNABORTED") {
       toast.error("Request timeout. Please try again later.");
+    }
+    if (error instanceof AxiosError && error.status === 500) {
+      toast.error("Internal server error. Please try again later.");
     }
     return Promise.reject(error);
   }

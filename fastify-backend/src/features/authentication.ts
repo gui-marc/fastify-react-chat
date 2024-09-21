@@ -1,3 +1,4 @@
+import PasscodeEmail from "../emails/passcode-email";
 import { Session, User } from "@prisma/client";
 import { FastifyPluginAsync } from "fastify";
 import fastifyPlugin from "fastify-plugin";
@@ -44,7 +45,11 @@ const plugin: FastifyPluginAsync = async (fastify) => {
 
       fastify.log.info(`Sending passcode to ${email} - ${passcode.value}`);
 
-      // Send passcode to user
+      await fastify.mailer.sendEmail({
+        to: email,
+        subject: "Sign in passcode",
+        component: PasscodeEmail({ passcode: passcode.value }),
+      });
 
       reply.status(204).send();
     });
