@@ -44,6 +44,19 @@ fastify.register(AuthenticationPlugin);
 fastify.register(FriendshipPlugin);
 fastify.register(UsersPlugin);
 
+fastify.setErrorHandler((error, request, reply) => {
+  if (error instanceof Error) {
+    fastify.log.error(error.message);
+
+    return reply.status(500).send({
+      statusCode: 500,
+      error: "Internal Server Error",
+      message: error.message,
+    });
+  }
+  reply.status(500).send(error);
+});
+
 const start = async () => {
   try {
     await fastify.listen({ port: PORT as number });
