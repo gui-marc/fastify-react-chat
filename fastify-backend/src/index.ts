@@ -61,7 +61,7 @@ fastify.setErrorHandler((error, request, reply) => {
 
 const start = async () => {
   try {
-    await fastify.listen({ port: PORT as number });
+    await fastify.listen({ port: PORT as number, host: "0.0.0.0" });
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);
