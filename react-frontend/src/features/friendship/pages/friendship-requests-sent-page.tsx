@@ -57,8 +57,8 @@ function RequestItem({ request }: { request: FriendshipRequestSent }) {
   return (
     <li className="flex items-center gap-4">
       <UserAvatar user={request.toUser} />
-      <h3>{request.toUser.name}</h3>
-      <p>{request.toUser.email}</p>
+      <h3 className="max-w-[30vw] truncate">{request.toUser.name}</h3>
+      <p className="hidden lg:block">{request.toUser.email}</p>
       <span
         className={cn(
           "ml-auto px-3 py-1.5 rounded-md text-xs uppercase tracking-wide font-medium",
@@ -103,6 +103,18 @@ export default function AllFriendshipsPage() {
       request.toUser.email.toLowerCase().includes(search.toLocaleLowerCase())
   );
 
+  const pendingRequests = filteredRequests?.filter(
+    (req) => req.status === "pending"
+  );
+
+  const acceptedRequests = filteredRequests?.filter(
+    (req) => req.status === "accepted"
+  );
+
+  const rejectedRequests = filteredRequests?.filter(
+    (req) => req.status === "rejected"
+  );
+
   return (
     <div>
       <Input
@@ -119,11 +131,44 @@ export default function AllFriendshipsPage() {
         )}
 
         {filteredRequests && filteredRequests.length > 0 && (
-          <ol className="grid gap-3">
-            {filteredRequests.map((request) => (
-              <RequestItem key={request.id} request={request} />
-            ))}
-          </ol>
+          <>
+            {pendingRequests!.length > 0 && (
+              <>
+                <p className="text-sm px-3 mb-3 text-muted-foreground">
+                  Pending requests
+                </p>
+                <ol className="grid gap-3 mb-5">
+                  {pendingRequests!.map((request) => (
+                    <RequestItem key={request.id} request={request} />
+                  ))}
+                </ol>
+              </>
+            )}
+            {acceptedRequests!.length > 0 && (
+              <>
+                <p className="text-sm px-3 mb-3 text-muted-foreground">
+                  Accepted requests
+                </p>
+                <ol className="grid gap-3 mb-5">
+                  {acceptedRequests!.map((request) => (
+                    <RequestItem key={request.id} request={request} />
+                  ))}
+                </ol>
+              </>
+            )}
+            {rejectedRequests!.length > 0 && (
+              <>
+                <p className="text-sm px-3 mb-3 text-muted-foreground">
+                  Rejected requests
+                </p>
+                <ol className="grid gap-3 mb-5">
+                  {rejectedRequests!.map((request) => (
+                    <RequestItem key={request.id} request={request} />
+                  ))}
+                </ol>
+              </>
+            )}
+          </>
         )}
       </FadeIn>
     </div>

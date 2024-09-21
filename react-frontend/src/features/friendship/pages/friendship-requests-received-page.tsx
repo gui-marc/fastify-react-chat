@@ -120,6 +120,18 @@ export default function AllFriendshipsPage() {
       req.fromUser.email.toLowerCase().includes(search.toLowerCase())
   );
 
+  const pendingRequests = filteredRequests?.filter(
+    (req) => req.status === "pending"
+  );
+
+  const acceptedRequests = filteredRequests?.filter(
+    (req) => req.status === "accepted"
+  );
+
+  const rejectedRequests = filteredRequests?.filter(
+    (req) => req.status === "rejected"
+  );
+
   return (
     <div>
       <Input
@@ -136,11 +148,47 @@ export default function AllFriendshipsPage() {
         )}
 
         {filteredRequests && filteredRequests.length > 0 && (
-          <ol className="grid gap-3">
-            {filteredRequests.map((request) => (
-              <RequestItem key={request.id} request={request} />
-            ))}
-          </ol>
+          <>
+            {pendingRequests!.length > 0 && (
+              <>
+                <p className="text-sm px-3 mb-3">
+                  {pendingRequests!.length} pending request
+                  {pendingRequests!.length > 1 ? "s" : ""}
+                </p>
+                <ol className="grid gap-3">
+                  {pendingRequests!.map((request) => (
+                    <RequestItem key={request.id} request={request} />
+                  ))}
+                </ol>
+              </>
+            )}
+            {acceptedRequests!.length > 0 && (
+              <>
+                <p className="text-sm px-3 mb-3">
+                  {acceptedRequests!.length} accepted request
+                  {acceptedRequests!.length > 1 ? "s" : ""}
+                </p>
+                <ol className="grid gap-3">
+                  {acceptedRequests!.map((request) => (
+                    <RequestItem key={request.id} request={request} />
+                  ))}
+                </ol>
+              </>
+            )}
+            {rejectedRequests!.length > 0 && (
+              <>
+                <p className="text-sm px-3 mb-3">
+                  {rejectedRequests!.length} rejected request
+                  {rejectedRequests!.length > 1 ? "s" : ""}
+                </p>
+                <ol className="grid gap-3">
+                  {rejectedRequests!.map((request) => (
+                    <RequestItem key={request.id} request={request} />
+                  ))}
+                </ol>
+              </>
+            )}
+          </>
         )}
       </FadeIn>
     </div>

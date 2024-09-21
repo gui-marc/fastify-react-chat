@@ -99,8 +99,8 @@
     --primary-foreground: var(--lime-12);
     --secondary: 240 4.8% 95.9%;
     --secondary-foreground: 240 5.9% 10%;
-    --muted: var(--olive-2);
-    --muted-foreground: var(--olive-11);
+    --muted: var(--olive-3);
+    --muted-foreground: var(--olive-10);
     --accent: var(--olive-3);
     --accent-foreground: var(--olive-12);
     --destructive: var(--tomato-9);
@@ -127,8 +127,8 @@
     --primary-foreground: var(--lime-1);
     --secondary: 240 3.7% 15.9%;
     --secondary-foreground: 0 0% 98%;
-    --muted: var(--olive-10);
-    --muted-foreground: var(--olive-11);
+    --muted: var(--olive-3);
+    --muted-foreground: var(--olive-10);
     --accent: var(--olive-3);
     --accent-foreground: var(--olive-12);
     --destructive: var(--tomato-9);
