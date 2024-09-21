@@ -1,13 +1,13 @@
 import { AsyncButton } from "@/components/ui/async-button";
 import { Button } from "@/components/ui/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+  ResponsiveDialog,
+  ResponsiveDialogContent,
+  ResponsiveDialogDescription,
+  ResponsiveDialogHeader,
+  ResponsiveDialogTitle,
+  ResponsiveDialogTrigger,
+} from "@/components/responsive-dialog";
 import useAddFriend from "../hooks/use-add-friend";
 import { Input } from "@/components/ui/input";
 import { SearchIcon, UserPlusIcon } from "lucide-react";
@@ -66,38 +66,30 @@ export default function AddFriendDialog({ children }: AddFriendDialogProps) {
   } = useSearchUsers();
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Add friend</DialogTitle>
-          <DialogDescription>
+    <ResponsiveDialog>
+      <ResponsiveDialogTrigger asChild>{children}</ResponsiveDialogTrigger>
+      <ResponsiveDialogContent className="px-6 pb-6">
+        <ResponsiveDialogHeader>
+          <ResponsiveDialogTitle>Add friend</ResponsiveDialogTitle>
+          <ResponsiveDialogDescription>
             Send a friendship request to a user.
-          </DialogDescription>
-        </DialogHeader>
+          </ResponsiveDialogDescription>
+        </ResponsiveDialogHeader>
 
-        <form className="relative">
+        <div className="relative">
           <Input
             placeholder="Search for a user name or email..."
             className="pr-10"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          <Button
-            size="icon"
-            variant="ghost"
-            className="absolute top-0.5 right-0.5 pointer-events-none"
-          >
+          <div className="absolute top-2.5 right-2.5 pointer-events-none">
             <SearchIcon className="w-[1.125rem] h-[1.125rem]" />
             <span className="sr-only">Search</span>
-          </Button>
-        </form>
+          </div>
+        </div>
 
-        <div
-          className={cn({
-            "min-h-[150px]": !search || isPending || users?.length === 0,
-          })}
-        >
+        <div className={cn("lg:min-h-[150px]")}>
           {users && users.length > 0 && (
             <ol className="grid gap-3">
               {users.map((user) => (
@@ -108,7 +100,7 @@ export default function AddFriendDialog({ children }: AddFriendDialogProps) {
 
           {isPending && <Loading />}
         </div>
-      </DialogContent>
-    </Dialog>
+      </ResponsiveDialogContent>
+    </ResponsiveDialog>
   );
 }
