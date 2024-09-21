@@ -7,6 +7,7 @@ import FriendshipPlugin from "./features/friendship";
 import UsersPlugin from "./features/users";
 import RedisPlugin from "./plugins/redis-plugin";
 import SocketPlugin from "./plugins/socket-plugin";
+import HealthCheckPlugin from "./features/health-check";
 import Fastify from "fastify";
 import cors from "@fastify/cors";
 
@@ -43,6 +44,7 @@ fastify.register(ZodValidatorPlugin);
 fastify.register(AuthenticationPlugin);
 fastify.register(FriendshipPlugin);
 fastify.register(UsersPlugin);
+fastify.register(HealthCheckPlugin);
 
 fastify.setErrorHandler((error, request, reply) => {
   if (error instanceof Error) {

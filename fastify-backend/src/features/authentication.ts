@@ -139,7 +139,11 @@ const plugin: FastifyPluginAsync = async (fastify) => {
   // middleware
   fastify.addHook("preHandler", async (request, reply) => {
     // if route is protected
-    const publicRoutes = ["/auth/send-passcode", "/auth/verify-passcode"];
+    const publicRoutes = [
+      "/auth/send-passcode",
+      "/auth/verify-passcode",
+      "/health",
+    ];
 
     if (
       publicRoutes.includes(request.url) ||
