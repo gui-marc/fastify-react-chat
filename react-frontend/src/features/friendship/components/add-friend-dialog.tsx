@@ -1,5 +1,4 @@
 import { AsyncButton } from "@/components/ui/async-button";
-import { Button } from "@/components/ui/button";
 import {
   ResponsiveDialog,
   ResponsiveDialogContent,
@@ -76,29 +75,31 @@ export default function AddFriendDialog({ children }: AddFriendDialogProps) {
           </ResponsiveDialogDescription>
         </ResponsiveDialogHeader>
 
-        <div className="relative">
-          <Input
-            placeholder="Search for a user name or email..."
-            className="pr-10"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <div className="absolute top-2.5 right-2.5 pointer-events-none">
-            <SearchIcon className="w-[1.125rem] h-[1.125rem]" />
-            <span className="sr-only">Search</span>
+        <div className="flex flex-col-reverse gap-5 sm:flex-col">
+          <div className="relative">
+            <Input
+              placeholder="Search for a user name or email..."
+              className="pr-10"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <div className="absolute top-2.5 right-2.5 pointer-events-none">
+              <SearchIcon className="w-[1.125rem] h-[1.125rem]" />
+              <span className="sr-only">Search</span>
+            </div>
           </div>
-        </div>
 
-        <div className={cn("lg:min-h-[150px]")}>
-          {users && users.length > 0 && (
-            <ol className="grid gap-3">
-              {users.map((user) => (
-                <UserItem key={user.id} user={user} />
-              ))}
-            </ol>
-          )}
+          <div className={cn("lg:min-h-[150px]")}>
+            {users && users.length > 0 && (
+              <ol className="grid gap-3">
+                {users.map((user) => (
+                  <UserItem key={user.id} user={user} />
+                ))}
+              </ol>
+            )}
 
-          {isPending && <Loading />}
+            {isPending && <Loading />}
+          </div>
         </div>
       </ResponsiveDialogContent>
     </ResponsiveDialog>
