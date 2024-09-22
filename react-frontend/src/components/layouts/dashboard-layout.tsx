@@ -140,7 +140,7 @@ export default function DashboardLayout() {
       <aside className="hidden lg:block">
         <SideBar />
       </aside>
-      <main className="flex-1 flex flex-col lg:rounded-lg bg-background-tint">
+      <main className="flex-1 flex flex-col lg:rounded-lg bg-background-tint max-h-[calc(100svh-4rem)] sm:max-h-[calc(100svh-2.5rem)]">
         <Outlet />
       </main>
     </div>

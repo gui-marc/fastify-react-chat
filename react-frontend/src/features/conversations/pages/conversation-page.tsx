@@ -10,10 +10,34 @@ import {
 } from "../schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField } from "@/components/ui/form";
-import { SendHorizontalIcon } from "lucide-react";
+import { ScrollTextIcon, SendHorizontalIcon } from "lucide-react";
 import useConversationMessages from "../hooks/use-conversation-messages";
 import UserAvatar from "@/features/users/components/user-avatar";
 import { useGetConversation } from "../hooks/use-get-conversation";
+import ConversationMessage from "../components/conversation-message";
+import {
+  EmptyState,
+  EmptyStateDescription,
+  EmptyStateIcon,
+  EmptyStateTitle,
+} from "@/components/empty-state";
+import { Skeleton } from "@/components/ui/skeleton";
+
+function NoMoreMessages() {
+  return (
+    <EmptyState>
+      <EmptyStateIcon Icon={ScrollTextIcon} />
+      <EmptyStateTitle>No more messages</EmptyStateTitle>
+      <EmptyStateDescription>You're all caught up!</EmptyStateDescription>
+    </EmptyState>
+  );
+}
+
+function LoadingSkeleton() {
+  return Array.from({ length: 5 }).map((_, i) => (
+    <Skeleton key={i} className="first:w-[70%] w-full h-6" />
+  ));
+}
 
 export default function ConversationPage() {
   const { mutate, isPending } = useSendConversationMessage();
@@ -45,34 +69,34 @@ export default function ConversationPage() {
   }
 
   return (
-    <div className="h-full flex-1 p-5 flex flex-col">
-      <header className="flex items-center">
+    <div className="h-full flex-1 flex flex-col">
+      <header className="flex items-center p-5">
         {conversation && <UserAvatar user={conversation?.friend} withStatus />}
         <h1 className="ml-3">{conversation?.friend.name}</h1>
       </header>
       <div
         id="scrollable-div"
-        className="overflow-y-auto flex-1 flex-col-reverse flex"
+        className="overflow-y-auto flex-1 flex-col-reverse flex max-h-[calc(100svh-14rem)] sm:max-h-none"
       >
         <InfiniteScroll
           dataLength={messages?.length || 0}
-          loader={<>Loading...</>}
+          loader={<LoadingSkeleton />}
           next={fetchNextPage}
           hasMore={hasNextPage}
-          endMessage={<>No more messages</>}
+          endMessage={<NoMoreMessages />}
           scrollableTarget="scrollable-div"
-          className="flex-col-reverse flex p-5"
+          className="flex-col-reverse flex gap-5 p-5"
           inverse
         >
           {messages?.map((message) => (
-            <div key={message.id}>{message.content}</div>
+            <ConversationMessage key={message.id} message={message} />
           ))}
         </InfiniteScroll>
       </div>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(handleSubmit)}
-          className="flex items-center gap-5"
+          className="flex items-center gap-5 p-5"
         >
           <FormField
             control={form.control}

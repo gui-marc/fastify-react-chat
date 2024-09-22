@@ -177,15 +177,12 @@ const ConversationsPlugin = fastifyPlugin(async (fastify) => {
       },
       include: {
         messages: {
-          ...(cursorId
-            ? {
-                cursor: { id: cursorId },
-              }
-            : {}),
+          cursor: cursorId ? { id: cursorId } : undefined,
           skip: cursorId ? 1 : 0,
           orderBy: {
             createdAt: "desc",
           },
+          take,
           include: {
             user: true,
             reactions: {
@@ -203,14 +200,7 @@ const ConversationsPlugin = fastifyPlugin(async (fastify) => {
       return;
     }
 
-    const messages = await fastify.db.message.findMany({
-      where: {
-        conversationId: id,
-      },
-      take,
-    });
-
-    reply.send(messages);
+    reply.send(conversation.messages);
   });
 
   fastify.post("/conversations/:id/messages", async (request, reply) => {

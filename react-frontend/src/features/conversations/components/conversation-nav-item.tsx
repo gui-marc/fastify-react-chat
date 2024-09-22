@@ -25,15 +25,15 @@ export default function ConversationNavItem({
     >
       <UserAvatar user={conversation.friend} withStatus />
       <div className="w-full">
-        <h4 className="max-w-[200px] truncate font-medium">
+        <h4 className="max-w-[min(200px_70svw)] truncate font-medium">
           {conversation.friend.name}
         </h4>
         {lastMessage && (
-          <p className="text-muted-foreground flex items-center gap-1.5">
+          <p className="text-muted-foreground text-sm flex items-center gap-1.5">
             {lastMessage.user.id !== conversation.friend.id && (
               <CornerUpRightIcon className="w-[1rem] h-[1rem] shrink-0" />
             )}
-            <span className="max-w-[150px] truncate block">
+            <span className="max-w-[min(200px_70svw)] truncate block">
               {lastMessage.content}
             </span>
             <span className="text-xs ml-auto block">

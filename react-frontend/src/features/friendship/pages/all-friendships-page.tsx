@@ -30,8 +30,10 @@ function FriendshipItem({ friend }: { friend: User }) {
   return (
     <li className="flex items-center gap-4">
       <UserAvatar user={friend} withStatus />
-      <h3>{friend.name}</h3>
-      <p>{friend.email}</p>
+      <div>
+        <h3 className="max-w-[70svw] truncate">{friend.name}</h3>
+        <p className="max-w-[70svw] text-sm truncate">{friend.email}</p>
+      </div>
       <AsyncButton
         className="ml-auto"
         size="icon"
@@ -112,7 +114,7 @@ export default function AllFriendshipsPage() {
         )}
 
         {filteredFriends && filteredFriends.length > 0 && (
-          <ol className="grid gap-3">
+          <ol className="grid gap-5">
             {filteredFriends.map((friend) => (
               <FriendshipItem key={friend.id} friend={friend} />
             ))}
