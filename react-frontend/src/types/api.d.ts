@@ -49,6 +49,7 @@ declare interface ConversationMessage {
   createdAt: Date;
   user: User;
   reactions: MessageReaction[];
+  queryStatus?: "pending" | "error";
 }
 
 declare interface MessageReaction {

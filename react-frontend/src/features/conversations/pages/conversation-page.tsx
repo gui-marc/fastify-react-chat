@@ -76,7 +76,7 @@ export default function ConversationPage() {
       </header>
       <div
         id="scrollable-div"
-        className="overflow-y-auto flex-1 flex-col-reverse flex max-h-[calc(100svh-14rem)] sm:max-h-none"
+        className="overflow-y-auto flex-1 flex-col-reverse flex max-h-[calc(100svh-14.25rem)] sm:max-h-none"
       >
         <InfiniteScroll
           dataLength={messages?.length || 0}
@@ -103,7 +103,11 @@ export default function ConversationPage() {
             name="content"
             render={({ field }) => (
               <FormControl>
-                <Input {...field} placeholder="Type a message..." />
+                <Input
+                  autoComplete="off"
+                  {...field}
+                  placeholder="Type a message..."
+                />
               </FormControl>
             )}
           />

@@ -24,6 +24,7 @@ interface SocketListenEvents {
   ["friendship-request"]: (req: FriendshipRequestReceived) => void;
   ["friendship-request-accepted"]: (req: FriendshipRequestSent) => void;
   ["friendship-request-rejected"]: (req: FriendshipRequestSent) => void;
+  ["conversation-message"]: (req: ConversationMessage) => void;
 }
 
 type SocketContextType = {

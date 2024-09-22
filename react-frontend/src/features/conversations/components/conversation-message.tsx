@@ -1,5 +1,6 @@
 import { useAuthLogged } from "@/features/authentication/auth-context";
 import { hourAndMinute } from "@/lib/date";
+import { CheckCheckIcon, HourglassIcon } from "lucide-react";
 
 export default function ConversationMessage({
   message,
@@ -25,7 +26,14 @@ export default function ConversationMessage({
       >
         {message.content}
       </div>
-      <p>{hourAndMinute(message.createdAt)}</p>
+      <p className="flex items-center gap-2">
+        {message.queryStatus === "pending" ? (
+          <HourglassIcon className="w-[1rem] h-[1rem]" />
+        ) : (
+          <CheckCheckIcon className="w-[1rem] h-[1rem]" />
+        )}
+        {hourAndMinute(message.createdAt)}
+      </p>
     </div>
   );
 }
