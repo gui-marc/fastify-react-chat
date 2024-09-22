@@ -1,4 +1,10 @@
-import { FriendshipRequest, Session, User } from "@prisma/client";
+import {
+  FriendshipRequest,
+  Message,
+  MessageReaction,
+  Session,
+  User,
+} from "@prisma/client";
 import { FastifyPluginAsync } from "fastify";
 import fastifyPlugin from "fastify-plugin";
 import { Server } from "socket.io";
@@ -9,9 +15,13 @@ type Emit<T> = (arg: T) => void;
 interface ListenEvents {}
 
 interface EmitEvents {
+  // Friendship
   ["friendship-request"]: Emit<FriendshipRequest>;
   ["friendship-request-accepted"]: Emit<FriendshipRequest>;
   ["friendship-request-rejected"]: Emit<FriendshipRequest>;
+  // Conversations
+  ["conversation-message"]: Emit<Message>;
+  ["conversation-message-reaction"]: Emit<MessageReaction>;
 }
 
 declare module "fastify" {
@@ -75,6 +85,22 @@ const plugin: FastifyPluginAsync = async (fastify) => {
       fastify.socket.on("connection", async (socket) => {
         const user = socket.session.user;
         socket.join(`user:${user.id}`);
+
+        const conversations = await fastify.db.conversation.findMany({
+          where: {
+            OR: [
+              { friendship: { user1Id: user.id } },
+              { friendship: { user2Id: user.id } },
+            ],
+          },
+          select: {
+            id: true,
+          },
+        });
+
+        conversations.forEach((conversation) => {
+          socket.join(`conversation:${conversation.id}`);
+        });
 
         fastify.log.info(`[SOCKET] - Connected ${socket.id} - ${user.email}`);
         await fastify.cache.set(`user-status:${user.id}`, "online");

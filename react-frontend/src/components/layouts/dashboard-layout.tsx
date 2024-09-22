@@ -7,7 +7,6 @@ import { MenuIcon, SearchIcon, UsersIcon } from "lucide-react";
 import { useFriendshipRequests } from "@/features/friendship/hooks/use-friendship-requests";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { Separator } from "../ui/separator";
 import SocketEvents from "../socket-events";
 import { ThemeToggle } from "../theme-toggle";
 import {
@@ -18,6 +17,9 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "../ui/sheet";
+import useGetConversations from "@/features/conversations/hooks/use-get-conversations";
+import { useState } from "react";
+import ConversationNavItem from "@/features/conversations/components/conversation-nav-item";
 
 function NavLink({ children, to }: { children: React.ReactNode; to: string }) {
   const isCurrent = useLocation().pathname.includes(to);
@@ -35,11 +37,23 @@ function NavLink({ children, to }: { children: React.ReactNode; to: string }) {
 }
 
 function SideBar() {
+  const [search, setSearch] = useState("");
   const { currentUser } = useAuthLogged();
   const { data: friendshipRequests } = useFriendshipRequests();
   const pendingRequests = friendshipRequests?.filter(
     (req) => req.status === "pending"
   );
+  const { data: conversations } = useGetConversations();
+
+  const filteredConversations = conversations
+    ? conversations.filter(
+        (conversation) =>
+          conversation.friend.name
+            .toLowerCase()
+            .includes(search.toLowerCase()) ||
+          conversation.friend.email.toLowerCase().includes(search.toLowerCase())
+      )
+    : [];
 
   return (
     <>
@@ -67,18 +81,26 @@ function SideBar() {
             )}
           </div>
         </NavLink>
-        <form className="relative">
-          <Input className="pl-10" placeholder="Search for a conversation..." />
-          <Button
-            size="icon"
-            variant="ghost"
-            className="absolute top-0.5 left-0.5"
-          >
+        <div className="relative">
+          <Input
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-10"
+            placeholder="Search for a conversation..."
+          />
+          <div className="absolute top-2.5 left-2.5 pointer-events-none">
             <SearchIcon className="w-[1.2rem] h-[1.2rem]" />
             <span className="sr-only">Search</span>
-          </Button>
-        </form>
-        <Separator />
+          </div>
+        </div>
+        {filteredConversations.length > 0 && (
+          <ol className="grid gap-3">
+            {filteredConversations.map((conversation) => (
+              <li key={conversation.id}>
+                <ConversationNavItem conversation={conversation} />
+              </li>
+            ))}
+          </ol>
+        )}
       </nav>
     </>
   );
@@ -94,7 +116,7 @@ export default function DashboardLayout() {
   }
 
   return (
-    <div className="min-h-svh lg:p-5 lg:grid lg:grid-cols-[300px_1fr] lg:gap-5">
+    <div className="min-h-svh flex flex-col lg:p-5 lg:grid lg:grid-cols-[300px_1fr] lg:gap-5">
       <SocketEvents />
       <header className="flex lg:hidden items-center justify-between bg-background px-4 py-3 drop-shadow-sm">
         <Sheet>
@@ -118,7 +140,7 @@ export default function DashboardLayout() {
       <aside className="hidden lg:block">
         <SideBar />
       </aside>
-      <main className="lg:rounded-lg bg-background-tint">
+      <main className="flex-1 flex flex-col lg:rounded-lg bg-background-tint">
         <Outlet />
       </main>
     </div>

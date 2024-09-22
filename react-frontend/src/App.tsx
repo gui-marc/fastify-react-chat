@@ -39,6 +39,14 @@ const FriendshipRequestsReceivedPage = lazy(
   () => import("@/features/friendship/pages/friendship-requests-received-page")
 );
 
+const ConversationsPage = lazy(
+  () => import("@/features/conversations/pages/conversations-page")
+);
+
+const ConversationPage = lazy(
+  () => import("@/features/conversations/pages/conversation-page")
+);
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -79,6 +87,15 @@ function App() {
                           <Route
                             path="requests"
                             Component={FriendshipRequestsReceivedPage}
+                          />
+                        </Route>
+                        <Route
+                          path="conversations"
+                          Component={ConversationsPage}
+                        >
+                          <Route
+                            path=":conversationId"
+                            Component={ConversationPage}
                           />
                         </Route>
                       </Route>

@@ -35,3 +35,25 @@ declare interface FriendshipRequest {
   fromUser: User;
   toUser: User;
 }
+
+declare interface Conversation {
+  id: string;
+  friend: User;
+  messages: ConversationMessage[];
+}
+
+declare interface ConversationMessage {
+  id: string;
+  conversationId: string;
+  content: string;
+  createdAt: Date;
+  user: User;
+  reactions: MessageReaction[];
+}
+
+declare interface MessageReaction {
+  id: string;
+  user: User;
+  unicode: string;
+  createdAt: Date;
+}

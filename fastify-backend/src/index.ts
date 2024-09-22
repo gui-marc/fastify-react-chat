@@ -9,6 +9,7 @@ import RedisPlugin from "./plugins/redis-plugin";
 import SocketPlugin from "./plugins/socket-plugin";
 import MailerPlugin from "./plugins/mailer-plugin";
 import HealthCheckPlugin from "./features/health-check";
+import ConversationsPlugin from "./features/conversations";
 import Fastify from "fastify";
 import cors from "@fastify/cors";
 
@@ -47,6 +48,7 @@ fastify.register(AuthenticationPlugin);
 fastify.register(FriendshipPlugin);
 fastify.register(UsersPlugin);
 fastify.register(HealthCheckPlugin);
+fastify.register(ConversationsPlugin);
 
 fastify.setErrorHandler((error, request, reply) => {
   if (error instanceof Error) {

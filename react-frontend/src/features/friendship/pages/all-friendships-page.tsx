@@ -9,17 +9,38 @@ import {
   EmptyStateTitle,
 } from "@/components/empty-state";
 import { Button } from "@/components/ui/button";
-import { HeartCrackIcon, UserPlusIcon } from "lucide-react";
+import {
+  HeartCrackIcon,
+  MessageCircleMoreIcon,
+  UserPlusIcon,
+} from "lucide-react";
 import AddFriendDialog from "../components/add-friend-dialog";
 import { useState } from "react";
 import FadeIn from "@/components/transitions/fade-in";
+import useStartConversation from "@/features/conversations/hooks/use-start-conversation";
+import { AsyncButton } from "@/components/ui/async-button";
 
 function FriendshipItem({ friend }: { friend: User }) {
+  const { isPending, mutate } = useStartConversation({ shouldNavigate: true });
+
+  function handleClick() {
+    mutate(friend.id);
+  }
+
   return (
     <li className="flex items-center gap-4">
       <UserAvatar user={friend} withStatus />
       <h3>{friend.name}</h3>
       <p>{friend.email}</p>
+      <AsyncButton
+        className="ml-auto"
+        size="icon"
+        variant="ghost"
+        isLoading={isPending}
+        onClick={handleClick}
+      >
+        <MessageCircleMoreIcon className="w-[1.2rem] h-[1.2rem]" />
+      </AsyncButton>
     </li>
   );
 }

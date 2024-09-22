@@ -40,7 +40,7 @@ export default function FriendshipsPage() {
 
   return (
     <div className="p-5 flex flex-col h-full gap-5">
-      <header className="px-2 lg:flex grid lg:items-center gap-3">
+      <header className="lg:flex grid lg:items-center gap-5">
         <div className="flex items-center gap-3">
           <UsersIcon className="w-[1.2rem] h-[1.2rem] text-foreground" />
           <h1 className="font-medium">Friends</h1>
