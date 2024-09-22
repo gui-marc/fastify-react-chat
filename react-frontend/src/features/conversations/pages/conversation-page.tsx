@@ -66,6 +66,7 @@ export default function ConversationPage() {
   function handleSubmit(data: SendConversationMessageInput) {
     mutate({ conversationId: conversationId as string, data });
     form.reset();
+    form.setFocus("content");
   }
 
   return (
