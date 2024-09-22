@@ -84,7 +84,7 @@ export default function ConversationPage() {
           loader={<LoadingSkeleton />}
           next={fetchNextPage}
           hasMore={hasNextPage}
-          endMessage={<NoMoreMessages />}
+          endMessage={isPending ? null : <NoMoreMessages />}
           scrollableTarget="scrollable-div"
           className="flex-col-reverse flex gap-5 p-5"
           inverse
