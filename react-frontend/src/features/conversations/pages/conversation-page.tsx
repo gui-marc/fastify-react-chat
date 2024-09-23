@@ -123,7 +123,7 @@ export default function ConversationPage() {
               user={conversation.friend}
               conversationId={conversation.id}
               message={form.watch("content")}
-              className="absolute -top-5 left-5"
+              className="absolute -top-4 left-5 text-sm"
             />
           )}
           <FormField

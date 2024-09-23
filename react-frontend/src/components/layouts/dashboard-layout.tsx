@@ -66,8 +66,12 @@ function SideBar() {
           </div>
         </div>
         <div>
-          <h2 className="font-medium">{currentUser.name}</h2>
-          <p>{currentUser.email}</p>
+          <h2 className="font-medium truncate max-w-[200px] sm:max-w-[280px]">
+            {currentUser.name}
+          </h2>
+          <p className="truncate max-w-[200px] sm:max-w-[280px]">
+            {currentUser.email}
+          </p>
         </div>
       </header>
       <nav className="grid gap-3">
