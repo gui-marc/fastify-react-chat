@@ -27,7 +27,7 @@ export default function useConversationTyping(
 
   useDebounce(
     async () => {
-      if (currentIsTyping && message !== prevMessage) {
+      if (currentIsTyping) {
         setCurrentIsTyping(false);
         setPrevMessage(message);
         await stopTyping(conversationId);
