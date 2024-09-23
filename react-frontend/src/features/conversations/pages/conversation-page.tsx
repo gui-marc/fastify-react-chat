@@ -35,12 +35,12 @@ function NoMoreMessages() {
 
 function LoadingSkeleton() {
   return Array.from({ length: 5 }).map((_, i) => (
-    <Skeleton key={i} className="first:w-[70%] w-full h-6" />
+    <Skeleton key={i} className="last:w-[70%] w-full h-10" />
   ));
 }
 
 export default function ConversationPage() {
-  const { mutate, isPending } = useSendConversationMessage();
+  const { mutate, isPending: isSendingMessage } = useSendConversationMessage();
 
   const { conversationId } = useParams<{ conversationId: string }>();
 
@@ -48,6 +48,7 @@ export default function ConversationPage() {
     data: messages,
     hasNextPage,
     fetchNextPage,
+    isPending,
   } = useConversationMessages(conversationId!);
 
   const { data: conversation } = useGetConversation(conversationId!);
@@ -72,27 +73,44 @@ export default function ConversationPage() {
   return (
     <div className="h-full flex-1 flex flex-col">
       <header className="flex items-center p-5">
-        {conversation && <UserAvatar user={conversation?.friend} withStatus />}
-        <h1 className="ml-3">{conversation?.friend.name}</h1>
+        {conversation ? (
+          <>
+            {conversation && (
+              <UserAvatar user={conversation.friend} withStatus />
+            )}
+            <h1 className="ml-3">{conversation.friend.name}</h1>
+          </>
+        ) : (
+          <>
+            <Skeleton className="w-10 h-10 rounded-full" />
+            <Skeleton className="max-w-[300px] w-full h-10" />
+          </>
+        )}
       </header>
       <div
         id="scrollable-div"
         className="overflow-y-auto flex-1 flex-col-reverse flex max-h-[calc(100svh-14.25rem)] sm:max-h-none"
       >
-        <InfiniteScroll
-          dataLength={messages?.length || 0}
-          loader={<LoadingSkeleton />}
-          next={fetchNextPage}
-          hasMore={hasNextPage}
-          endMessage={isPending ? null : <NoMoreMessages />}
-          scrollableTarget="scrollable-div"
-          className="flex-col-reverse flex gap-5 p-5"
-          inverse
-        >
-          {messages?.map((message) => (
-            <ConversationMessage key={message.id} message={message} />
-          ))}
-        </InfiniteScroll>
+        {isPending ? (
+          <div className="flex flex-col gap-5 p-5">
+            <LoadingSkeleton />
+          </div>
+        ) : (
+          <InfiniteScroll
+            dataLength={messages?.length || 0}
+            loader={<LoadingSkeleton />}
+            next={fetchNextPage}
+            hasMore={hasNextPage}
+            endMessage={<NoMoreMessages />}
+            scrollableTarget="scrollable-div"
+            className="flex-col-reverse flex gap-5 p-5"
+            inverse
+          >
+            {messages?.map((message) => (
+              <ConversationMessage key={message.id} message={message} />
+            ))}
+          </InfiniteScroll>
+        )}
       </div>
       <Form {...form}>
         <form
@@ -113,7 +131,7 @@ export default function ConversationPage() {
             )}
           />
           <AsyncButton
-            isLoading={isPending}
+            isLoading={isSendingMessage}
             type="submit"
             size="icon"
             className="shrink-0"
