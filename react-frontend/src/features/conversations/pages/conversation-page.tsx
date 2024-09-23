@@ -22,6 +22,7 @@ import {
   EmptyStateTitle,
 } from "@/components/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
+import ConversationTypingIndicator from "../components/conversation-typing-indicator";
 
 function NoMoreMessages() {
   return (
@@ -115,8 +116,16 @@ export default function ConversationPage() {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(handleSubmit)}
-          className="flex items-center gap-5 p-5"
+          className="flex items-center gap-5 p-5 relative"
         >
+          {conversation && (
+            <ConversationTypingIndicator
+              user={conversation.friend}
+              conversationId={conversation.id}
+              message={form.watch("content")}
+              className="absolute -top-5 left-5"
+            />
+          )}
           <FormField
             control={form.control}
             name="content"

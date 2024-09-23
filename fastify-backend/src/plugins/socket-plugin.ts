@@ -22,6 +22,11 @@ interface EmitEvents {
   // Conversations
   ["conversation-message"]: Emit<Message>;
   ["conversation-message-reaction"]: Emit<MessageReaction>;
+  ["conversation-typing"]: Emit<{
+    conversationId: string;
+    isTyping: boolean;
+    userId: string;
+  }>;
 }
 
 declare module "fastify" {

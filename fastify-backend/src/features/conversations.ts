@@ -160,6 +160,30 @@ const ConversationsPlugin = fastifyPlugin(async (fastify) => {
     reply.send({ ...conversation, friend });
   });
 
+  fastify.post("/conversations/:id/start-typing", async (request, reply) => {
+    const { id } = fastify.validate(conversationIdParamSchema, request.params);
+
+    fastify.socket.to(`conversation:${id}`).emit("conversation-typing", {
+      conversationId: id,
+      userId: request.user.id,
+      isTyping: true,
+    });
+
+    reply.status(204).send();
+  });
+
+  fastify.post("/conversations/:id/stop-typing", async (request, reply) => {
+    const { id } = fastify.validate(conversationIdParamSchema, request.params);
+
+    fastify.socket.to(`conversation:${id}`).emit("conversation-typing", {
+      conversationId: id,
+      userId: request.user.id,
+      isTyping: false,
+    });
+
+    reply.status(204).send();
+  });
+
   fastify.get("/conversations/:id/messages", async (request, reply) => {
     const { id } = fastify.validate(conversationIdParamSchema, request.params);
     const { cursorId, take } = fastify.validate(

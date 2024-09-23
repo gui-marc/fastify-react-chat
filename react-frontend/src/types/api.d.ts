@@ -42,6 +42,12 @@ declare interface Conversation {
   messages: ConversationMessage[];
 }
 
+declare interface ConversationTyping {
+  conversationId: string;
+  userId: string;
+  isTyping: boolean;
+}
+
 declare interface ConversationMessage {
   id: string;
   conversationId: string;

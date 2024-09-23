@@ -51,3 +51,11 @@ export async function getConversation(conversationId: string) {
   );
   return response.data;
 }
+
+export async function startTyping(conversationId: string) {
+  await client.post(`${BASE_URL}/${conversationId}/start-typing`);
+}
+
+export async function stopTyping(conversationId: string) {
+  await client.post(`${BASE_URL}/${conversationId}/stop-typing`);
+}

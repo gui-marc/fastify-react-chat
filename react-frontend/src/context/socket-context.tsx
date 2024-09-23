@@ -21,10 +21,13 @@ const socket = io(import.meta.env.VITE_SOCKET_URL, {
 
 interface SocketListenEvents {
   ["connect"]: () => void;
+  // Friendship
   ["friendship-request"]: (req: FriendshipRequestReceived) => void;
   ["friendship-request-accepted"]: (req: FriendshipRequestSent) => void;
   ["friendship-request-rejected"]: (req: FriendshipRequestSent) => void;
+  // Conversation
   ["conversation-message"]: (req: ConversationMessage) => void;
+  ["conversation-typing"]: (req: ConversationTyping) => void;
 }
 
 type SocketContextType = {
