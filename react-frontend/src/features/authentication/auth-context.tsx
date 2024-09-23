@@ -1,6 +1,12 @@
 import { client } from "@/api/client";
 import * as AuthAPI from "./api";
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -21,14 +27,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isPending, setIsPending] = useState<boolean>(true);
   const isAuthenticated = currentUser !== null;
 
-  async function authenticate(token: string) {
+  const authenticate = useCallback(async (token: string) => {
     localStorage.setItem("token", token);
     const user = await AuthAPI.getCurrentUser();
     setCurrentUser(user);
     return user;
-  }
+  }, []);
 
-  async function logout() {
+  const logout = useCallback(async () => {
     setIsPending(true);
     setCurrentUser(null);
     try {
@@ -41,7 +47,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       navigate("/sign-in");
       setIsPending(false);
     }
-  }
+  }, [queryClient, navigate]);
 
   useEffect(() => {
     client.interceptors.response.use(

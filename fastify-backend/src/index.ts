@@ -1,5 +1,9 @@
 import "dotenv/config";
 
+import Fastify from "fastify";
+import cors from "@fastify/cors";
+import helmet from "@fastify/helmet";
+
 import PrismaPlugin from "./plugins/prisma-plugin";
 import AuthenticationPlugin from "./features/authentication";
 import ZodValidatorPlugin from "./features/zod-validator";
@@ -10,8 +14,7 @@ import SocketPlugin from "./plugins/socket-plugin";
 import MailerPlugin from "./plugins/mailer-plugin";
 import HealthCheckPlugin from "./features/health-check";
 import ConversationsPlugin from "./features/conversations";
-import Fastify from "fastify";
-import cors from "@fastify/cors";
+import RateLimiterPlugin from "./plugins/rate-limiter-plugin";
 
 const PORT = process.env.PORT || 3000;
 
@@ -39,8 +42,10 @@ fastify.register(cors, {
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
 });
+fastify.register(helmet, { global: true });
 fastify.register(PrismaPlugin);
 fastify.register(RedisPlugin);
+fastify.register(RateLimiterPlugin);
 fastify.register(SocketPlugin);
 fastify.register(MailerPlugin);
 fastify.register(ZodValidatorPlugin);
@@ -50,18 +55,18 @@ fastify.register(UsersPlugin);
 fastify.register(HealthCheckPlugin);
 fastify.register(ConversationsPlugin);
 
-fastify.setErrorHandler((error, request, reply) => {
-  if (error instanceof Error) {
-    fastify.log.error(error.message);
+// fastify.setErrorHandler((error, request, reply) => {
+//   if (error instanceof Error) {
+//     fastify.log.error(error.message);
 
-    return reply.status(500).send({
-      statusCode: 500,
-      error: "Internal Server Error",
-      message: error.message,
-    });
-  }
-  reply.status(500).send(error);
-});
+//     return reply.status(500).send({
+//       statusCode: 500,
+//       error: "Internal Server Error",
+//       message: error.message,
+//     });
+//   }
+//   reply.status(500).send(error);
+// });
 
 const start = async () => {
   try {

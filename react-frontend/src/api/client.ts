@@ -29,8 +29,12 @@ client.interceptors.response.use(
     if (error.code === "ECONNABORTED") {
       toast.error("Request timeout. Please try again later.");
     }
-    if (error instanceof AxiosError && error.status === 500) {
-      toast.error("Internal server error. Please try again later.");
+    if (error instanceof AxiosError) {
+      if (error.status === 500) {
+        toast.error("Internal server error. Please try again later.");
+      } else if (error.status === 429) {
+        toast.error(error.response?.data.message);
+      }
     }
     return Promise.reject(error);
   }

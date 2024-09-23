@@ -8,13 +8,13 @@ declare module "fastify" {
   }
 }
 
+export const redis = createClient({
+  url: process.env.REDIS_URL,
+});
+
 const plugin: FastifyPluginAsync = async (fastify) => {
   try {
     fastify.log.info("[REDIS] - Connecting");
-
-    const redis = createClient({
-      url: process.env.REDIS_URL,
-    });
 
     await redis.connect();
 

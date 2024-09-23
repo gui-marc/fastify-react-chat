@@ -26,76 +26,98 @@ const verifyPasscodeSchema = z.object({
 
 const plugin: FastifyPluginAsync = async (fastify) => {
   try {
-    fastify.post("/auth/send-passcode", async (request, reply) => {
-      const { email } = fastify.validate(sendPasscodeSchema, request.body);
+    fastify.post(
+      "/auth/send-passcode",
+      {
+        config: {
+          rateLimit: {
+            max: 5,
+            timeWindow: "1 minute",
+          },
+        },
+      },
+      async (request, reply) => {
+        const { email } = fastify.validate(sendPasscodeSchema, request.body);
 
-      const passcode = await fastify.db.sigInPasscode.create({
-        data: {
-          expiresAt: new Date(Date.now() + 1000 * 60 * 5), // 5 minutes,
-          // 6 digit random number
-          value: Math.floor(100000 + Math.random() * 900000),
-          user: {
-            connectOrCreate: {
-              where: { email },
-              create: { email },
+        const passcode = await fastify.db.sigInPasscode.create({
+          data: {
+            expiresAt: new Date(Date.now() + 1000 * 60 * 5), // 5 minutes,
+            // 6 digit random number
+            value: Math.floor(100000 + Math.random() * 900000),
+            user: {
+              connectOrCreate: {
+                where: { email },
+                create: { email },
+              },
             },
           },
-        },
-      });
+        });
 
-      fastify.log.info(`Sending passcode to ${email} - ${passcode.value}`);
+        fastify.log.info(`Sending passcode to ${email} - ${passcode.value}`);
 
-      await fastify.mailer.sendEmail({
-        to: email,
-        subject: "Sign in passcode",
-        component: PasscodeEmail({ passcode: passcode.value }),
-      });
+        await fastify.mailer.sendEmail({
+          to: email,
+          subject: "Sign in passcode",
+          component: PasscodeEmail({ passcode: passcode.value }),
+        });
 
-      reply.status(204).send();
-    });
-
-    fastify.post("/auth/verify-passcode", async (request, reply) => {
-      const { email, passcode } = fastify.validate(
-        verifyPasscodeSchema,
-        request.body
-      );
-
-      const passcodeRecord = await fastify.db.sigInPasscode.findFirst({
-        where: {
-          value: parseInt(passcode),
-          expiresAt: {
-            gte: new Date(),
-          },
-          user: {
-            email,
-          },
-        },
-      });
-
-      if (!passcodeRecord) {
-        reply.status(401).send();
-        return;
+        reply.status(204).send();
       }
+    );
 
-      const session = await fastify.db.session.create({
-        data: {
-          expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24), // 24 hours
-          user: {
-            connect: {
+    fastify.post(
+      "/auth/verify-passcode",
+      {
+        config: {
+          rateLimit: {
+            max: 5,
+            timeWindow: "1 minute",
+          },
+        },
+      },
+      async (request, reply) => {
+        const { email, passcode } = fastify.validate(
+          verifyPasscodeSchema,
+          request.body
+        );
+
+        const passcodeRecord = await fastify.db.sigInPasscode.findFirst({
+          where: {
+            value: parseInt(passcode),
+            expiresAt: {
+              gte: new Date(),
+            },
+            user: {
               email,
             },
           },
-        },
-      });
+        });
 
-      await fastify.db.sigInPasscode.delete({
-        where: {
-          id: passcodeRecord.id,
-        },
-      });
+        if (!passcodeRecord) {
+          reply.status(401).send();
+          return;
+        }
 
-      reply.status(200).send({ token: session.id });
-    });
+        const session = await fastify.db.session.create({
+          data: {
+            expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24), // 24 hours
+            user: {
+              connect: {
+                email,
+              },
+            },
+          },
+        });
+
+        await fastify.db.sigInPasscode.delete({
+          where: {
+            id: passcodeRecord.id,
+          },
+        });
+
+        reply.status(200).send({ token: session.id });
+      }
+    );
 
     fastify.get("/auth/me", async (request, reply) => {
       reply.send(request.user);
