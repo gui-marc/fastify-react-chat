@@ -8,9 +8,6 @@ services:
     container_name: redis
     ports:
       - "6379:6379"
-    environment:
-      - REDIS_USERNAME=redis
-      - REDIS_PASSWORD=redis
 
   maildev:
     image: djfarrelly/maildev
